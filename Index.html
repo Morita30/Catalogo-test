@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Frenos Dulanto | Catálogo</title>
+    <style>
+        :root {
+            --negro-pro: #000000;
+            --azul-premium: #007bff;
+            --verde-wa: #25d366;
+            --fondo: #f8f9fa;
+        }
+
+        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { margin: 0; background-color: var(--fondo); color: #333; }
+
+        /* BARRA NEGRA SUPERIOR */
+        header {
+            background: var(--negro-pro);
+            color: white;
+            padding: 20px 15px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .logo { font-size: 22px; font-weight: 800; letter-spacing: 1px; margin-bottom: 15px; }
+        .logo span { color: var(--azul-premium); }
+
+        .search-box {
+            width: 100%; max-width: 450px; padding: 12px 20px;
+            border-radius: 30px; border: none; font-size: 16px;
+            outline: none; display: block; margin: 0 auto;
+        }
+
+        /* GRID */
+        .grid {
+            display: grid; grid-template-columns: repeat(2, 1fr);
+            gap: 12px; padding: 15px; max-width: 900px; margin: 0 auto;
+        }
+
+        .card {
+            background: white; border-radius: 20px; padding: 12px;
+            display: flex; flex-direction: column; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        /* CUADRO SIN FOTO (Temporal) */
+        .no-photo {
+            width: 100%; aspect-ratio: 1/1; background: #e9ecef;
+            border-radius: 15px; display: flex; align-items: center;
+            justify-content: center; font-size: 12px; color: #adb5bd;
+            text-align: center; padding: 10px; font-weight: 600;
+            text-transform: uppercase; border: 1px dashed #dee2e6;
+        }
+
+        .info { margin-top: 10px; text-align: center; }
+        .info h3 { font-size: 11px; color: var(--azul-premium); margin: 0; text-transform: uppercase; }
+        .info p { font-size: 14px; font-weight: 700; margin: 5px 0; min-height: 40px; }
+        .price { color: var(--negro-pro); font-size: 16px; margin-bottom: 10px; display: block; }
+
+        .btn-add {
+            background: var(--azul-premium); color: white; border: none;
+            padding: 10px; border-radius: 12px; font-weight: 700;
+            width: 100%; cursor: pointer; transition: 0.2s;
+        }
+
+        /* CARRITO FLOTANTE */
+        .cart-btn {
+            position: fixed; bottom: 25px; right: 25px;
+            background: var(--verde-wa); color: white;
+            width: 65px; height: 65px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 28px; box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+            cursor: pointer; z-index: 2000;
+        }
+        .badge {
+            position: absolute; top: 0; right: 0; background: #ff3b30;
+            color: white; font-size: 12px; padding: 4px 8px; border-radius: 50%;
+            font-weight: bold; border: 2px solid white;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">FRENOS <span>DULANTO</span></div>
+    <input type="text" id="bus" class="search-box" placeholder="Buscar pastilla, disco..." onkeyup="filtrar()">
+</header>
+
+<div class="grid" id="cont"></div>
+
+<div class="cart-btn" onclick="enviarWA()">
+    🛒 <span class="badge" id="count">0</span>
+</div>
+
+<script>
+    // LISTA DE PRODUCTOS (Sin fotos por ahora)
+    const productos = [
+        { m: "TOYOTA", n: "Pastilla de Freno Hilux", p: 100 },
+        { m: "NISSAN", n: "Disco de Freno Sentra", p: 100 },
+        { m: "NISSAN", n: "Pastilla de Freno Frontier", p: 100 },
+        { m: "TOYOTA", n: "Disco de Freno Yaris", p: 100 },
+        { m: "HYUNDAI", n: "Pastilla Accent", p: 95 },
+        { m: "KIA", n: "Pastilla Rio", p: 90 }
+    ];
+
+    let carrito = [];
+
+    function render(lista) {
+        const cont = document.getElementById('cont');
+        cont.innerHTML = lista.map((p, i) => `
+            <div class="card">
+                <div class="no-photo">${p.n}</div>
+                <div class="info">
+                    <h3>${p.m}</h3>
+                    <p>${p.n}</p>
+                    <span class="price">S/ ${p.p.toFixed(2)}</span>
+                    <button class="btn-add" onclick="agregar(${i})">Agregar</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function filtrar() {
+        const b = document.getElementById('bus').value.toLowerCase().split(" ");
+        const res = productos.filter(p => b.every(pal => p.n.toLowerCase().includes(pal) || p.m.toLowerCase().includes(pal)));
+        render(res);
+    }
+
+    function agregar(i) {
+        carrito.push(productos[i]);
+        document.getElementById('count').innerText = carrito.length;
+        const btn = event.target;
+        btn.innerText = "¡Listo!"; btn.style.background = "#28a745";
+        setTimeout(() => { btn.innerText = "Agregar"; btn.style.background = "#007bff"; }, 800);
+    }
+
+    function enviarWA() {
+        if (carrito.length === 0) return alert("Selecciona algún repuesto primero");
+        let msg = "Hola Frenos Dulanto, quiero cotizar:\n\n";
+        carrito.forEach(p => msg += `• ${p.n} (${p.m}) - S/ ${p.p}\n`);
+        window.open(`https://wa.me/51947429347?text=${encodeURIComponent(msg)}`);
+    }
+
+    render(productos);
+</script>
+
+</body>
+</html>
