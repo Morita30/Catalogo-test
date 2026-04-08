@@ -77,6 +77,20 @@ body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background-co
     box-sizing: border-box;
 }
 
+/* Estado activo del botón del menú (Piezas/Marcas) */
+.btn-menu.active-filter {
+    background-color: #e3f2fd !important; /* Celeste claro minimalista */
+    color: #007bff !important;           /* Texto azul para contrastar */
+    border: 1px solid #bbdefb;           /* Borde celeste un poco más oscuro */
+}
+
+/* Color de los items dentro del desplegable cuando están seleccionados */
+.menu-item.active {
+    background-color: #e3f2fd !important;
+    color: #007bff !important;
+    font-weight: bold;
+}
+
 /* --- CARRITO ARREGLADO (Mismo tamaño que filtros) --- */
 .btn-cart-header {
     background: white;
