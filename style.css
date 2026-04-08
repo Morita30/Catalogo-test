@@ -19,10 +19,11 @@ body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background-co
 .brand-logo { height: 35px; width: auto; object-fit: contain; }
 
 .btn-cart-header {
-    background: white; /* Volvemos a blanco para que combine con los filtros */
+    background: white;
     color: #000000; 
-    border: none; 
-    padding: 10px; 
+    border: none;
+    height: 40x;
+    padding:0 10px; 
     border-radius: 12px; 
     font-weight: 700; 
     font-size: 16px; 
@@ -30,9 +31,10 @@ body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background-co
     display: flex; 
     align-items: center; 
     justify-content: center;
-    width: 55px; /* Le damos un ancho fijo similar a los otros botones */
+    width: 50px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     position: relative;
+    box-sizing: border-box;
 }
 
 .badge-header { background: var(--verde-wa); color: white; padding: 2px 6px; border-radius: 6px; font-size: 11px; }
@@ -61,15 +63,17 @@ body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background-co
     display: flex; 
     gap: 8px; 
     width: 100%; 
-    justify-content: center; max-width: 500px; } 
+    justify-content: center;
+    align-items: center; max-width: 500px; } 
 
 
 
 .menu-dropdown { position: relative; flex: 1; }
 .btn-menu { 
-    background: white; border: none; padding: 10px 5px; border-radius: 12px; 
+    background: white; border: none;height: 40px; padding: 10px 5px; border-radius: 12px; 
     font-size: 12px; font-weight: 700; cursor: pointer; width: 100%; 
     box-shadow: 0 2px 5px rgba(0,0,0,0.05); text-align: center;
+box-sizing: border-box;
 }
 .menu-content { 
     display: none; position: absolute; top: 110%; left: 0; width: 100%; 
