@@ -174,14 +174,33 @@
   } 
 
   function setFiltro(tipo, val, txt, el, e) {
-    e.stopPropagation();
-    if(tipo === 'cat') { fCat = val; document.getElementById('lCat').innerText = txt; }
-    else { fMarca = val; document.getElementById('lMar').innerText = txt; }
-    document.querySelectorAll(`#m${tipo === 'cat' ? 'Cat' : 'Mar'} .menu-item`).forEach(i => i.classList.remove('active'));
-    el.classList.add('active');
-    document.querySelectorAll('.menu-content').forEach(m => m.classList.remove('show'));
-    ejecutarFiltro();
+  e.stopPropagation();
+  
+  // 1. Guardar el valor y actualizar el texto del botón
+  if(tipo === 'cat') { 
+    fCat = val; 
+    document.getElementById('lCat').innerText = txt; 
+    // Si es 'todas', quitamos el color celeste, si no, lo ponemos
+    const btn = document.getElementById('lCat').parentElement;
+    if(val === 'todas') btn.classList.remove('active-filter');
+    else btn.classList.add('active-filter');
   } 
+  else { 
+    fMarca = val; 
+    document.getElementById('lMar').innerText = txt; 
+    const btn = document.getElementById('lMar').parentElement;
+    if(val === 'todas') btn.classList.remove('active-filter');
+    else btn.classList.add('active-filter');
+  }
+
+  // 2. Marcar como activo el item dentro del menú
+  document.querySelectorAll(`#m${tipo === 'cat' ? 'Cat' : 'Mar'} .menu-item`).forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+
+  // 3. Cerrar menús y filtrar
+  document.querySelectorAll('.menu-content').forEach(m => m.classList.remove('show'));
+  ejecutarFiltro();
+}
 
   function toggleCartModal(e) {
     e.stopPropagation();
