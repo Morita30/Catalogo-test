@@ -18,10 +18,14 @@ body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background-co
 .badge-header { background: var(--verde-wa); color: white; padding: 2px 6px; border-radius: 6px; font-size: 11px; }
 
 .sticky-controls {
-    position: sticky; top: 56px; z-index: 10000;
-    background: var(--gris-fondo); padding: 10px;
+    position: sticky; 
+    top: 100px; /* Antes estaba en 56px, ahora bajará más */
+    z-index: 10000;
+    background: var(--gris-fondo); 
+    padding: 10px;
     box-shadow: 0 10px 15px -10px rgba(0,0,0,0.05);
-} 
+}
+
 
 .header-controls { display: flex; flex-direction: column; align-items: center; gap: 8px; }
 .search-input { 
