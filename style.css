@@ -5,16 +5,34 @@
 body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background-color: var(--gris-fondo); margin: 0; padding: 0; overflow-x: hidden; } 
 
 .brand-bar {
-    background: white; padding: 10px 15px; display: flex; justify-content: space-between;
-    align-items: center; border-bottom: 1px solid #e5e5ea; position: sticky; top: 0; z-index: 10001;
+    background: #000000; /* Esto cambia el fondo a negro */
+    padding: 15px 15px; 
+    display: flex; 
+    justify-content: space-between;
+    align-items: center; 
+    border-bottom: 1px solid #333; 
+    position: sticky; 
+    top: 0; 
+    z-index: 10001;
 }
+
 .brand-logo { height: 35px; width: auto; object-fit: contain; }
 
 .btn-cart-header {
-    background: #1c1c1e; color: white; border: none; padding: 8px 12px; 
-    border-radius: 12px; font-weight: 700; font-size: 14px; cursor: pointer;
-    display: flex; align-items: center; gap: 8px; position: relative;
+    background: #ffffff; /* Ahora el botón es blanco */
+    color: #000000;      /* El icono del carrito es negro */
+    border: none; 
+    padding: 8px 12px; 
+    border-radius: 12px; 
+    font-weight: 700; 
+    font-size: 14px; 
+    cursor: pointer;
+    display: flex; 
+    align-items: center; 
+    gap: 8px; 
+    position: relative;
 }
+
 .badge-header { background: var(--verde-wa); color: white; padding: 2px 6px; border-radius: 6px; font-size: 11px; }
 
 .sticky-controls {
@@ -27,12 +45,15 @@ body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background-co
 }
 
 
-.header-controls { display: flex; flex-direction: column; align-items: center; gap: 8px; }
-.search-input { 
-    width: 100%; max-width: 450px; padding: 12px; border: none; 
-    border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); outline: none; 
-    font-size: 16px; text-align: center;
+.sticky-controls {
+    position: sticky; 
+    top: 66px; /* Este número hace que pegue justo al borde de la barra negra */
+    z-index: 10000;
+    background: var(--gris-fondo); 
+    padding: 15px 10px;
+    box-shadow: 0 10px 15px -10px rgba(0,0,0,0.05);
 }
+
   
 .selectors-row { display: flex; gap: 8px; width: 100%; justify-content: center; max-width: 450px; } 
 
