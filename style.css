@@ -224,3 +224,33 @@ body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background-co
     box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 }
 
+/* --- MEJORAS DE UX --- */
+.card { transition: transform 0.2s; cursor: pointer; }
+.card:active { transform: scale(0.95); }
+
+/* --- MODAL PROFESIONAL (BACKDROP BLUR) --- */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(8px); /* Fondo borroso */
+    display: none; justify-content: center; align-items: flex-end;
+    z-index: 20000;
+}
+.modal-content {
+    background: white; width: 100%; max-width: 500px;
+    border-radius: 25px 25px 0 0; padding: 20px;
+    max-height: 85vh; overflow-y: auto;
+    animation: slideUp 0.3s ease-out;
+}
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+.close-modal { float: right; background: #eee; border: none; width: 30px; height: 30px; border-radius: 50%; font-weight: bold; }
+.modal-img { width: 100%; border-radius: 15px; margin-bottom: 15px; }
+.info-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f2f2f2; font-size: 14px; }
+.info-label { font-weight: bold; color: #666; }
+.btn-add-modal { 
+    background: #007bff; color: white; border: none; width: 100%; 
+    padding: 15px; border-radius: 12px; font-weight: bold; margin-top: 15px; 
+}
+
