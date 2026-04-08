@@ -19,17 +19,19 @@ body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background-co
 .brand-logo { height: 35px; width: auto; object-fit: contain; }
 
 .btn-cart-header {
-    background: #ffffff; /* Ahora el botón es blanco */
-    color: #000000;      /* El icono del carrito es negro */
+    background: white; /* Volvemos a blanco para que combine con los filtros */
+    color: #000000; 
     border: none; 
-    padding: 8px 12px; 
+    padding: 10px; 
     border-radius: 12px; 
     font-weight: 700; 
-    font-size: 14px; 
+    font-size: 16px; 
     cursor: pointer;
     display: flex; 
     align-items: center; 
-    gap: 8px; 
+    justify-content: center;
+    width: 55px; /* Le damos un ancho fijo similar a los otros botones */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     position: relative;
 }
 
@@ -55,7 +57,11 @@ body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background-co
 }
 
   
-.selectors-row { display: flex; gap: 8px; width: 100%; justify-content: center; max-width: 450px; } 
+.selectors-row { 
+    display: flex; 
+    gap: 8px; 
+    width: 100%; 
+    justify-content: center; max-width: 450px; } 
 
 
 
@@ -75,7 +81,9 @@ body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background-co
 .menu-item.active { background: var(--azul-premium); color: white; } 
 
 #cartModal {
-    display: none; position: fixed; top: 60px; right: 10px; width: 300px;
+    display: none; 
+    position: fixed; 
+    top: 130px; right: 10px; width: 300px;
     background: white; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.3);
     z-index: 10005; padding: 15px; border: 1px solid #eee;
 }
