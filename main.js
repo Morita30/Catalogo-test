@@ -221,3 +221,27 @@ window.onclick = () => closeAllMenus();
 
 // Inicialización
 renderProductos();
+
+let modalProduct = null;
+
+function openModal(product) {
+    modalProduct = product;
+
+    document.getElementById('modalImg').src = imgUrlBase;
+    document.getElementById('modalTitle').innerText = product.n;
+    document.getElementById('modalBrand').innerText = product.m;
+    document.getElementById('modalPrice').innerText = "S/ " + product.p;
+
+    document.getElementById('productModal').classList.add('show');
+}
+
+function closeModal() {
+    document.getElementById('productModal').classList.remove('show');
+}
+
+// Cerrar tocando fuera
+document.getElementById('productModal').addEventListener('click', function(e) {
+    if (e.target.id === 'productModal') {
+        closeModal();
+    }
+});
