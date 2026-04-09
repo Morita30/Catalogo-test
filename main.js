@@ -16,6 +16,8 @@ function renderProductos() {
     productosData.forEach((p, i) => {
         cont.innerHTML += `
         <div class="card" onclick='openModal(${JSON.stringify(p)})' data-tipo="${p.c}" data-marca="${p.m}" data-full="${p.n} ${p.m}">
+${p.top ? '<div class="badge badge-top">Más vendido</div>' : ''}
+${p.offer ? '<div class="badge badge-offer">Oferta</div>' : ''}
           <div class="carousel-container" id="container-${i}" ontouchstart="handleTouchStart(event, ${i})" ontouchend="handleTouchEnd(event, ${i})">
             <div class="carousel-track" id="track-${i}" data-idx="1" data-cloning="false">
               <img src="${p.imgs ? p.imgs[0] : imgUrlBase}"> 
