@@ -307,3 +307,54 @@ body {
         grid-template-columns: repeat(5, 1fr) !important;
     }
 }
+
+/* =========================
+   ANIMACIONES UI (HOVER + TOUCH)
+========================= */
+
+/* BOTONES DE FILTRO */
+.btn-menu {
+    transition: all 0.2s ease;
+}
+
+.btn-menu:hover {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+}
+
+.btn-menu:active {
+    transform: scale(0.96);
+}
+
+/* BUSCADOR */
+.search-input {
+    transition: all 0.25s ease;
+}
+
+.search-input:hover {
+    box-shadow: 0 6px 15px rgba(0,0,0,0.12);
+}
+
+.search-input:focus {
+    transform: scale(1.02);
+    box-shadow: 0 8px 20px rgba(0,123,255,0.2);
+}
+
+/* CARRITO */
+.btn-cart-header {
+    transition: all 0.2s ease;
+}
+
+.btn-cart-header:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+}
+
+.btn-cart-header:active {
+    transform: scale(0.9);
+}
+
+/* QUITAR FLASH FEO EN CELULAR */
+button {
+    -webkit-tap-highlight-color: transparent;
+}
