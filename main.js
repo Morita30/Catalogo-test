@@ -226,7 +226,8 @@ renderProductos();
 
 let modalProduct = null;
 
-function openModal(product) {
+function openModal(index) {
+    const product = productosData[index];
     modalProduct = product;
 
     document.getElementById('modalImg').src = imgUrlBase;
