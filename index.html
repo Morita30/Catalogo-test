@@ -15,7 +15,7 @@
 <div class="sticky-controls">
   <div class="header-controls">
     <input type="text" id="bus" class="search-input" placeholder="🔍 Buscar producto..." onkeyup="ejecutarFiltro()">
-    
+
     <div class="selectors-row">
       <div class="menu-dropdown">
         <button class="btn-menu" onclick="toggleMenu('mCat', event)">⚙️ <span id="lCat">Pieza</span></button>
@@ -65,16 +65,19 @@
   let cart = {};
   let fCat = 'todas', fMarca = 'todas'; 
 
-  // --- FUNCIÓN DE RENDERIZADO MEJORADA (Incluye indicadores) ---
+  // --- FUNCIÓN DE RENDERIZADO MEJORADA (Estructura para Loop Infinito) ---
   function renderProductos() {
     const cont = document.getElementById('contenedor');
     cont.innerHTML = "";
     productosData.forEach((p, i) => {
+      // Estructura HTML para loop: [Clon 3] [1] [2] [3] [Clon 1]
       cont.innerHTML += `
         <div class="card" data-tipo="${p.c}" data-marca="${p.m}" data-full="${p.n} ${p.m}">
           <div class="carousel-container" id="container-${i}" ontouchstart="handleTouchStart(event, ${i})" ontouchend="handleTouchEnd(event, ${i})">
-            <div class="carousel-track" id="track-${i}" data-idx="0">
+            <div class="carousel-track" id="track-${i}" data-idx="1" data-cloning="false">
+              <img src="${imgUrlBase}"> 
               <img src="${imgUrlBase}"><img src="${imgUrlBase}"><img src="${imgUrlBase}">
+              <img src="${imgUrlBase}">
             </div>
             <div class="carousel-indicators">
               <span class="dot active" data-dot="0"></span>
@@ -90,33 +93,72 @@
     });
   }
 
-  // --- NUEVA LÓGICA DE CARRUSEL (Infinita y con Indicadores) ---
+  // --- LÓGICA DE CARRUSEL INFINITO REAL (Con Clonación y Reposicionamiento) ---
   let touchStartX = 0;
-  function handleTouchStart(e, id) { touchStartX = e.changedTouches[0].screenX; }
+  function handleTouchStart(e, id) { 
+    touchStartX = e.changedTouches[0].screenX; 
+  }
+
   function handleTouchEnd(e, id) {
     let touchEndX = e.changedTouches[0].screenX;
     let diff = touchStartX - touchEndX;
+    // Sensibilidad del swipe
     if (Math.abs(diff) > 40) moveCarouselInfinite(id, diff > 0 ? 1 : -1);
   }
 
   function moveCarouselInfinite(id, dir) {
-    const container = document.getElementById(`container-${id}`);
     const track = document.getElementById(`track-${id}`);
+    const container = document.getElementById(`container-${id}`);
     const indicators = container.querySelectorAll('.dot');
-    if(!track) return;
+    
+    // Bloquear si ya estamos reposicionando un clon
+    if (!track || track.getAttribute('data-cloning') === 'true') return;
 
+    // Índice actual basado en la estructura de 5 imágenes (0 a 4)
+    // Empezamos en 1 (primera real), no 0 (clon de la última)
     let currentIdx = parseInt(track.getAttribute('data-idx'));
     
-    // Nueva posición con lógica infinita (Sin fin)
-    let nextIdx = (currentIdx + dir + 3) % 3;
+    // Calcular siguiente índice sin restricciones
+    let nextIdx = currentIdx + dir;
 
-    // Movimiento
-    track.style.transform = `translateX(-${nextIdx * 33.333}%)`;
+    // Habilitar animación para el movimiento normal
+    track.classList.remove('no-transition');
+    
+    // Mover (cada imagen es 20% del ancho del track)
+    track.style.transform = `translateX(-${nextIdx * 20}%)`;
     track.setAttribute('data-idx', nextIdx);
 
-    // Actualizar Indicadores
+    // Actualizar indicadores (basados en 0, 1, 2 reales)
+    let indicatorIdx;
+    if (nextIdx === 4) indicatorIdx = 0;      // Estamos en clon de 1
+    else if (nextIdx === 0) indicatorIdx = 2; // Estamos en clon de 3
+    else indicatorIdx = nextIdx - 1;          // Ajuste índice real
+
     indicators.forEach(i => i.classList.remove('active'));
-    indicators[nextIdx].classList.add('active');
+    indicators[indicatorIdx].classList.add('active');
+
+    // --- GESTIÓN DEL SALTO INVISIBLE (REPOSICIONAMIENTO) ---
+    // Si llegamos a un clon (índice 0 o 4), reposicionamos al terminar la animación
+    if (nextIdx === 0 || nextIdx === 4) {
+      track.setAttribute('data-cloning', 'true'); // Bloquear nuevos swipes
+
+      // Esperar a que termine la transición CSS (0.4s)
+      setTimeout(() => {
+        // Quitar animación instantáneamente
+        track.classList.add('no-transition');
+
+        let jumpIdx;
+        if (nextIdx === 4) jumpIdx = 1; // De clon 1 saltar a 1 real
+        if (nextIdx === 0) jumpIdx = 3; // De clon 3 saltar a 3 real
+
+        // Mover instantáneamente
+        track.style.transform = `translateX(-${jumpIdx * 20}%)`;
+        track.setAttribute('data-idx', jumpIdx);
+
+        // Desbloquear para siguientes swipes
+        track.setAttribute('data-cloning', 'false');
+      }, 400); // Mismo tiempo que la transición CSS
+    }
   }
 
   // --- LÓGICA DE FUNCIONAMIENTO ---
@@ -133,40 +175,33 @@
   }
 
   function addToCart(name, price, event) {
-    // 1. Sumar al carrito como siempre
     if (cart[name]) cart[name].qty++; else cart[name] = { price, qty: 1 };
     updateCartUI();
 
-    // 2. CREAR EL EFECTO DE VUELO
     const btnCart = document.getElementById('btnCart');
-    const rectCart = btnCart.getBoundingClientRect(); // Posición del carrito
+    const rectCart = btnCart.getBoundingClientRect();
 
     const flyer = document.createElement('div');
     flyer.className = 'flying-item';
-    
-    // El objeto nace donde hiciste clic (event.clientX y Y)
     flyer.style.left = `${event.clientX - 20}px`;
     flyer.style.top = `${event.clientY - 20}px`;
-    
+
     document.body.appendChild(flyer);
 
-    // Animamos el viaje hacia el carrito
     setTimeout(() => {
         flyer.style.left = `${rectCart.left + (rectCart.width / 2) - 20}px`;
         flyer.style.top = `${rectCart.top + (rectCart.height / 2) - 20}px`;
-        flyer.style.transform = 'scale(0.1)'; // Se hace chiquito al llegar
+        flyer.style.transform = 'scale(0.1)';
         flyer.style.opacity = '0';
     }, 10);
 
-    // Borramos el objeto al terminar y hacemos que el carrito "brinque"
     setTimeout(() => {
         flyer.remove();
         btnCart.style.transition = 'transform 0.2s';
-        btnCart.style.transform = 'scale(1.3)'; // Brinco
+        btnCart.style.transform = 'scale(1.3)';
         setTimeout(() => btnCart.style.transform = 'scale(1)', 200);
     }, 700);
 }
-
 
   function changeQty(name, delta, e) {
     e.stopPropagation();
@@ -206,29 +241,20 @@
 
   function setFiltro(tipo, val, txt, el, e) {
   e.stopPropagation();
-  
-  // 1. Guardar el valor y actualizar el texto del botón
   if(tipo === 'cat') { 
     fCat = val; 
     document.getElementById('lCat').innerText = txt; 
-    // Si es 'todas', quitamos el color celeste, si no, lo ponemos
     const btn = document.getElementById('lCat').parentElement;
-    if(val === 'todas') btn.classList.remove('active-filter');
-    else btn.classList.add('active-filter');
+    if(val === 'todas') btn.classList.remove('active-filter'); else btn.classList.add('active-filter');
   } 
   else { 
     fMarca = val; 
     document.getElementById('lMar').innerText = txt; 
     const btn = document.getElementById('lMar').parentElement;
-    if(val === 'todas') btn.classList.remove('active-filter');
-    else btn.classList.add('active-filter');
+    if(val === 'todas') btn.classList.remove('active-filter'); else btn.classList.add('active-filter');
   }
-
-  // 2. Marcar como activo el item dentro del menú
   document.querySelectorAll(`#m${tipo === 'cat' ? 'Cat' : 'Mar'} .menu-item`).forEach(i => i.classList.remove('active'));
   el.classList.add('active');
-
-  // 3. Cerrar menús y filtrar
   document.querySelectorAll('.menu-content').forEach(m => m.classList.remove('show'));
   ejecutarFiltro();
 }
