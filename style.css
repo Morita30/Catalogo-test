@@ -1,50 +1,225 @@
+/* --- CONFIGURACIÓN GLOBAL --- */
 :root { 
-    --azul-premium: #007bff; --verde-wa: #25d366; --gris-fondo: #f2f2f7; 
-    --texto-negro: #1c1c1e; --texto-gris: #8e8e93; --rojo-oferta: #ff3b30; --dorado-top: #ffcc00;
+    --azul-premium: #007bff; 
+    --verde-wa: #25d366; 
+    --gris-fondo: #f2f2f7; 
+    --texto-negro: #1c1c1e; 
+    --texto-gris: #8e8e93; 
 }
-body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background-color: var(--gris-fondo); margin: 0; padding: 0; overflow-x: hidden; } 
+body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background-color: var(--gris-fondo); margin: 0; padding: 0; overflow-x: hidden; color: var(--texto-negro); } 
 
-/* HEADER & CONTROLES */
-.brand-bar { background: #000; padding: 15px 0; display: flex; justify-content: center; position: sticky; top: 0; z-index: 10001; height: 70px; box-sizing: border-box; }
-.brand-logo { height: 40px; }
-.sticky-controls { position: sticky; top: 70px; z-index: 10000; background: var(--gris-fondo); padding: 15px 10px; box-shadow: 0 10px 15px -10px rgba(0,0,0,0.05); } 
+/* --- BARRA DEL TITULO (LOGO CENTRADO) --- */
+.brand-bar {
+    background: #000000;
+    padding: 15px 0; /* Centramos el logo verticalmente */
+    display: flex; 
+    justify-content: center; /* ESTO CENTRA EL LOGO TOTALMENTE */
+    align-items: center; 
+    border-bottom: 1px solid #333; 
+    position: sticky; 
+    top: 0; 
+    z-index: 10001;
+    height: 70px; /* Altura fija para el logo */
+    box-sizing: border-box;
+}
+.brand-logo { height: 40px; width: auto; object-fit: contain; }
+
+/* --- SECCIÓN DE CONTROLES (BAJADA Y ARREGLADA) --- */
+.sticky-controls {
+    position: sticky; 
+    top: 70px; /* Justo debajo de la barra negra */
+    z-index: 10000;
+    background: var(--gris-fondo); 
+    padding: 15px 10px;
+    box-shadow: 0 10px 15px -10px rgba(0,0,0,0.05);
+} 
+
 .header-controls { display: flex; flex-direction: column; align-items: center; gap: 12px; }
-.search-input { width: 100%; max-width: 450px; padding: 12px 20px; border: none; border-radius: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); outline: none; text-align: center; }
 
-/* DROPDOWNS */
-.selectors-row { display: flex; gap: 10px; width: 100%; justify-content: center; max-width: 500px; } 
-.menu-dropdown { position: relative; flex: 1; }
-.btn-menu { background: white; border: none; height: 40px; border-radius: 12px; font-size: 11px; font-weight: 700; width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 0 12px; transition: all 0.3s; }
-.btn-menu::after { content: '▼'; font-size: 8px; transition: transform 0.3s; color: var(--texto-gris); }
-.btn-menu.open::after { transform: rotate(180deg); }
-.btn-menu.active-filter { background-color: #e3f2fd !important; color: var(--azul-premium) !important; border: 1px solid #bbdefb; }
+/* --- BUSCADOR CURVO --- */
+.search-input { 
+    width: 100%; 
+    max-width: 450px; 
+    padding: 12px 20px; /* Más espacio lateral para las curvas */
+    border: none; 
+    border-radius: 30px; /* MÁXIMA CURVATURA */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08); 
+    outline: none; 
+    font-size: 16px; 
+    text-align: center;
+    background: white;
+    box-sizing: border-box;
+}
 
-.menu-content { position: absolute; top: 45px; left: 0; width: 100%; background: white; border-radius: 12px; z-index: 10002; box-shadow: 0 8px 25px rgba(0,0,0,0.15); max-height: 0; opacity: 0; pointer-events: none; transform: translateY(-10px); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; }
-.menu-content.show { max-height: 300px; opacity: 1; pointer-events: all; transform: translateY(0); }
-.menu-item { padding: 12px; font-size: 13px; border-bottom: 1px solid #f2f2f2; cursor: pointer; text-align: center; }
-.menu-item.active { background: #e3f2fd; color: var(--azul-premium); font-weight: bold; }
+/* --- FILA DE SELECTORES (NIVELADOS MILIMÉTRICAMENTE) --- */
+.selectors-row { 
+    display: flex; 
+    gap: 10px; 
+    width: 100%; 
+    justify-content: center; 
+    align-items: center; /* Alinea los centros de los tres */
+    max-width: 500px; 
+} 
 
-/* BADGES & CARDS */
-.grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 10px; }
-.card { background: white; border-radius: 18 : 18px; padding: 10px; display: flex; flex-direction: column; position: relative; box-shadow: 0 2px 8px rgba(0,0,0,0.05); text-align: center; }
-.badge { position: absolute; top: 8px; padding: 4px 8px; border-radius: 6px; font-size: 9px; font-weight: 800; z-index: 20; text-transform: uppercase; }
-.badge-best { left: 8px; background: var(--dorado-top); color: #000; }
-.badge-offer { right: 8px; background: var(--rojo-oferta); color: #fff; animation: pulse 2s infinite; }
-@keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+.menu-dropdown { flex: 1; }
 
-/* CARRUSEL LOOP */
-.carousel-container { position: relative; width: 100%; aspect-ratio: 1/1; border-radius: 12px; overflow: hidden; margin-bottom: 8px; background: #eee; touch-action: pan-y; }
-.carousel-track { display: flex; transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1); width: 500%; height: 100%; transform: translateX(-20%); }
-.carousel-track img { width: 20%; height: 100%; object-fit: cover; pointer-events: none; }
-.no-transition { transition: none !important; }
-.carousel-indicators { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); display: flex; gap: 5px; z-index: 10; }
-.dot { width: 20px; height: 3px; background: rgba(255,255,255,0.5); border-radius: 3px; transition: all 0.3s; }
-.dot.active { background: #fff; width: 30px; }
+.btn-menu { 
+    background: white; 
+    border: none; 
+    height: 40px; /* Altura forzada */
+    border-radius: 12px; 
+    font-size: 12px; 
+    font-weight: 700; 
+    cursor: pointer; 
+    width: 100%; 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
+    text-align: center;
+    box-sizing: border-box;
+}
 
-/* CARRITO & FLYING EFFECT */
-.btn-cart-header { background: white; border: none; height: 40px; width: 50px; border-radius: 12px; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.05); cursor: pointer; }
+/* Estado activo del botón del menú (Piezas/Marcas) */
+.btn-menu.active-filter {
+    background-color: #e3f2fd !important; /* Celeste claro minimalista */
+    color: #007bff !important;           /* Texto azul para contrastar */
+    border: 1px solid #bbdefb;           /* Borde celeste un poco más oscuro */
+}
+
+/* Color de los items dentro del desplegable cuando están seleccionados */
+.menu-item.active {
+    background-color: #e3f2fd !important;
+    color: #007bff !important;
+    font-weight: bold;
+}
+
+/* --- CARRITO ARREGLADO (Mismo tamaño que filtros) --- */
+.btn-cart-header {
+    background: white;
+    color: #000000;
+    border: none;
+    height: 40px; /* Misma altura forzada */
+    width: 50px;  /* Ancho para que parezca un botón más */
+    padding: 0; /* Quitamos padding para que entre en la fila */
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    position: relative;
+    box-sizing: border-box;
+}
 .badge-header { background: var(--verde-wa); color: white; padding: 2px 6px; border-radius: 6px; font-size: 11px; position: absolute; top: -5px; right: -5px; }
-#cartModal { display: none; position: fixed; top: 140px; right: 10px; width: 300px; background: white; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); z-index: 10005; padding: 15px; border: 1px solid #eee; }
-.cart-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f2f2f2; }
-.flying-item { position: fixed; width: 40px; height: 40px; background: var(--azul-premium); border-radius: 10px; z-index: 99999; pointer-events: none; transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1); opacity: 0.8; }
+
+/* --- MENÚS DESPLEGABLES --- */
+.menu-content { 
+    display: none; 
+    position: absolute; 
+    top: 110%; 
+    left: 0; 
+    width: 100%; 
+    background: white; 
+    border-radius: 12px; 
+    z-index: 10002; 
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15); 
+    border: 1px solid #eee; 
+    overflow-y: auto; 
+    max-height: 300px;
+}
+.menu-content.show { display: block; }
+.menu-item { padding: 12px; font-size: 13px; border-bottom: 1px solid #f2f2f2; cursor: pointer; text-align: center; }
+.menu-item.active { background: var(--azul-premium); color: white; } 
+
+/* --- MODAL DEL CARRITO --- */
+#cartModal {
+    display: none; 
+    position: fixed; 
+    top: 140px; /* Justo debajo de los botones */
+    right: 10px; 
+    width: 300px;
+    background: white; 
+    border-radius: 20px; 
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    z-index: 10005; 
+    padding: 15px; 
+    border: 1px solid #eee;
+}
+
+/* --- GRID DE PRODUCTOS (FIJO 2 COLUMNAS) --- */
+.grid { 
+    display: grid; 
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 10px; 
+    padding: 10px; 
+}
+
+/* --- TARJETA DE PRODUCTO --- */
+.card { background: white; border-radius: 18px; padding: 10px; display: flex; flex-direction: column; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); } 
+  
+/* --- NUEVO CARRUSEL PROFESIONAL --- */
+.carousel-container { 
+    position: relative; 
+    width: 100%; 
+    aspect-ratio: 1/1; 
+    border-radius: 12px; 
+    overflow: hidden; 
+    margin-bottom: 8px; 
+    background: #eee; 
+    touch-action: pan-y;
+}
+.carousel-track { 
+    display: flex; 
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1); 
+    width: 300%; 
+    height: 100%; 
+}
+.carousel-track img { width: 33.333%; height: 100%; object-fit: cover; pointer-events: none; }
+  
+/* INDICADORES DE LÍNEAS */
+.carousel-indicators {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 5px;
+    z-index: 10;
+}
+.dot {
+    width: 20px; /* Estilo línea corta */
+    height: 3px;
+    background: rgba(255,255,255,0.5);
+    border-radius: 3px;
+    transition: background 0.3s;
+}
+.dot.active {
+    background: rgba(255,255,255,1);
+    width: 30px; /* Línea más larga para el activo */
+}
+
+/* OCULTAMOS LAS FLECHAS POR DEFECTO */
+.nav-arrows { display: none; } 
+
+/* OTROS ESTILOS DE LA TARJETA */
+.brand-tag { font-size: 9px; color: var(--azul-premium); font-weight: 800; text-transform: uppercase; }
+.price-tag { font-size: 16px; font-weight: 800; margin: 5px 0 10px 0; color: #333; }
+.btn-add { background: var(--azul-premium); color: white; border: none; padding: 10px; border-radius: 10px; font-weight: 700; font-size: 11px; cursor: pointer; transition: background 0.2s; } 
+.btn-add:active { background: #0056b3; }
 .hidden { display: none !important; }
+
+.cart-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f2f2f2; }
+
+/* Animación del producto volando */
+.flying-item {
+    position: fixed;
+    width: 40px;
+    height: 40px;
+    background: #007bff; /* El azul de tu marca */
+    border-radius: 10px;
+    z-index: 99999;
+    pointer-events: none;
+    transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0.8;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
