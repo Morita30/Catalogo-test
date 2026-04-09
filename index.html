@@ -3,13 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Frenos Dulanto - Catálogo</title>
+    <title>Frenos Dulanto</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body> 
-
-<div class="brand-bar"><img src="logo.png" alt="Logo" class="brand-logo"></div>
-
+<body>
+<div class="brand-bar"><img src="logo.png" class="brand-logo"></div>
 <div class="sticky-controls">
   <div class="header-controls">
     <input type="text" id="bus" class="search-input" placeholder="🔍 Buscar producto..." onkeyup="ejecutarFiltro()">
@@ -34,15 +32,17 @@
       <button class="btn-cart-header" id="btnCart" onclick="toggleCartModal(event)">🛒 <span class="badge-header" id="cartBadge">0</span></button>
     </div>
   </div>
-</div> 
+</div>
 
-<div id="cartModal" style="display:none; position:fixed; top:140px; right:10px; width:300px; background:white; border-radius:20px; box-shadow:0 10px 40px rgba(0,0,0,0.3); z-index:10005; padding:15px; border:1px solid #eee;">
-  <div style="font-weight:800; display:flex; justify-content:space-between; border-bottom:1px solid #eee; padding-bottom:8px;"><span>Mi Pedido</span><span id="totalLabel">S/ 0</span></div>
+<div id="cartModal">
+  <div style="font-weight:800; display:flex; justify-content:space-between; border-bottom:1px solid #eee; padding-bottom:8px;">
+    <span>Mi Pedido</span><span id="totalLabel">S/ 0</span>
+  </div>
   <div id="cartList"></div>
-  <button style="background:var(--verde-wa); color:white; border:none; width:100%; padding:14px; border-radius:12px; font-weight:700; margin-top:10px;" onclick="sendWhatsApp()">WhatsApp</button>
-</div> 
+  <button style="background:var(--verde-wa); color:white; border:none; width:100%; padding:14px; border-radius:12px; font-weight:700; cursor:pointer; margin-top:10px;" onclick="sendWhatsApp()">WhatsApp</button>
+</div>
 
-<div class="grid" id="contenedor"></div> 
+<div class="grid" id="contenedor"></div>
 
 <script src="database.js"></script>
 <script>
@@ -52,18 +52,15 @@
     const cont = document.getElementById('contenedor');
     cont.innerHTML = "";
     productosData.forEach((p, i) => {
-      // Lógica de etiquetas dinámicas
-      let badgeHtml = "";
-      if(p.e === 'm') badgeHtml = `<div class="badge badge-best">Más vendido</div>`;
-      if(p.e === 'o') badgeHtml = `<div class="badge badge-offer">Oferta</div>`;
-
+      let b = p.e === 'm' ? '<div class="badge badge-best">Más vendido</div>' : p.e === 'o' ? '<div class="badge badge-offer">Oferta</div>' : '';
       cont.innerHTML += `
         <div class="card" data-tipo="${p.c}" data-marca="${p.m}" data-full="${p.n} ${p.m}">
-          ${badgeHtml}
-          <div class="carousel-container" id="container-${i}" ontouchstart="handleTouchStart(event, ${i})" ontouchend="handleTouchEnd(event, ${i})">
-            <div class="carousel-track" id="track-${i}" data-idx="1" data-cloning="false">
+          ${b}
+          <div class="carousel-container" id="container-${i}" ontouchstart="hTS(event, ${i})" ontouchend="hTE(event, ${i})">
+            <div class="carousel-track" id="track-${i}" data-idx="1">
               <img src="${imgUrlBase}"><img src="${imgUrlBase}"><img src="${imgUrlBase}"><img src="${imgUrlBase}"><img src="${imgUrlBase}">
             </div>
+            <div class="carousel-indicators"><span class="dot active"></span><span class="dot"></span><span class="dot"></span></div>
           </div>
           <div class="brand-tag">${p.m}</div>
           <h3 style="font-size:12px; margin:3px 0; min-height:30px;">${p.n}</h3>
@@ -73,70 +70,107 @@
     });
   }
 
-  // --- CARRUSEL Y FILTROS ---
-  function toggleMenu(mId, bId, e) {
-    e.stopPropagation();
-    const menu = document.getElementById(mId), btn = document.getElementById(bId);
-    const showing = menu.classList.contains('show');
-    document.querySelectorAll('.menu-content').forEach(m => m.classList.remove('show'));
-    document.querySelectorAll('.btn-menu').forEach(b => b.classList.remove('open'));
-    if(!showing) { menu.classList.add('show'); btn.classList.add('open'); }
+  // --- CARRUSEL LOOP ---
+  let tStart = 0;
+  function hTS(e, id) { tStart = e.changedTouches[0].screenX; }
+  function hTE(e, id) {
+    let diff = tStart - e.changedTouches[0].screenX;
+    if (Math.abs(diff) > 40) moveLoop(id, diff > 0 ? 1 : -1);
+  }
+  function moveLoop(id, dir) {
+    const track = document.getElementById(`track-${id}`);
+    if (track.dataset.cloning === "true") return;
+    let next = parseInt(track.dataset.idx) + dir;
+    track.classList.remove('no-transition');
+    track.style.transform = `translateX(-${next * 20}%)`;
+    track.dataset.idx = next;
+    updateDots(id, next);
+    if (next === 0 || next === 4) {
+      track.dataset.cloning = "true";
+      setTimeout(() => {
+        track.classList.add('no-transition');
+        let jump = next === 4 ? 1 : 3;
+        track.style.transform = `translateX(-${jump * 20}%)`;
+        track.dataset.idx = jump;
+        track.dataset.cloning = "false";
+      }, 400);
+    }
+  }
+  function updateDots(id, idx) {
+    const dots = document.getElementById(`container-${id}`).querySelectorAll('.dot');
+    let active = idx === 4 ? 0 : idx === 0 ? 2 : idx - 1;
+    dots.forEach((d, i) => d.classList.toggle('active', i === active));
   }
 
-  function setFiltro(tipo, val, txt, el, e) {
-    e.stopPropagation();
-    if(tipo === 'cat') { fCat = val; document.getElementById('lCat').innerText = txt; }
-    else { fMarca = val; document.getElementById('lMar').innerText = txt; }
-    
-    const btnId = (tipo === 'cat' ? 'btnCat' : 'btnMar');
-    const btn = document.getElementById(btnId);
-    if(val === 'todas') btn.classList.remove('active-filter'); else btn.classList.add('active-filter');
-
-    document.querySelectorAll(`#m${tipo === 'cat' ? 'Cat' : 'Mar'} .menu-item`).forEach(i => i.classList.remove('active'));
-    el.classList.add('active');
-    document.querySelectorAll('.menu-content').forEach(m => m.classList.remove('show'));
-    document.querySelectorAll('.btn-menu').forEach(b => b.classList.remove('open'));
-    ejecutarFiltro();
-  }
-
-  function ejecutarFiltro() {
-    const q = document.getElementById('bus').value.toLowerCase();
-    document.querySelectorAll('.card').forEach(c => {
-      const matchCat = (fCat === 'todas' || c.dataset.tipo === fCat);
-      const matchMar = (fMarca === 'todas' || c.dataset.marca === fMarca);
-      const matchBus = c.dataset.full.toLowerCase().includes(q);
-      if(matchCat && matchMar && matchBus) c.classList.remove('hidden'); else c.classList.add('hidden');
-    });
-  }
-
+  // --- CARRITO & EFECTO ---
   function addToCart(n, p, e) {
-    if(cart[n]) cart[n].qty++; else cart[n] = {price:p, qty:1};
+    if (cart[n]) cart[n].qty++; else cart[n] = { price: p, qty: 1 };
     updateUI();
+    const btn = document.getElementById('btnCart').getBoundingClientRect();
+    const fly = document.createElement('div');
+    fly.className = 'flying-item';
+    fly.style.left = `${e.clientX - 20}px`; fly.style.top = `${e.clientY - 20}px`;
+    document.body.appendChild(fly);
+    setTimeout(() => {
+      fly.style.left = `${btn.left}px`; fly.style.top = `${btn.top}px`;
+      fly.style.transform = 'scale(0.1)'; fly.style.opacity = '0';
+    }, 10);
+    setTimeout(() => fly.remove(), 700);
   }
-
   function updateUI() {
     const list = document.getElementById('cartList');
     let t = 0, c = 0; list.innerHTML = "";
-    for(const n in cart) {
+    for (const n in cart) {
       t += cart[n].price * cart[n].qty; c += cart[n].qty;
-      list.innerHTML += `<div style="display:flex; justify-content:space-between; padding:5px 0; font-size:12px;"><span>${n}</span><span>x${cart[n].qty}</span></div>`;
+      list.innerHTML += `<div class="cart-item">
+        <div style="font-size:11px"><b>${n}</b><br>S/ ${cart[n].price * cart[n].qty}</div>
+        <div style="display:flex; align-items:center; gap:5px">
+          <button onclick="chgQty('${n}',-1,event)" style="border:none; width:24px; border-radius:4px">-</button>
+          <b>${cart[n].qty}</b>
+          <button onclick="chgQty('${n}',1,event)" style="border:none; width:24px; border-radius:4px">+</button>
+        </div>
+      </div>`;
     }
     document.getElementById('cartBadge').innerText = c;
     document.getElementById('totalLabel').innerText = `S/ ${t}`;
   }
+  function chgQty(n, d, e) { e.stopPropagation(); cart[n].qty += d; if (cart[n].qty <= 0) delete cart[n]; updateUI(); }
 
-  function toggleCartModal(e) {
+  // --- FILTROS ---
+  function toggleMenu(m, b, e) {
     e.stopPropagation();
-    const m = document.getElementById('cartModal');
-    m.style.display = m.style.display === 'block' ? 'none' : 'block';
+    const menu = document.getElementById(m), btn = document.getElementById(b);
+    const wasOpen = menu.classList.contains('show');
+    document.querySelectorAll('.menu-content').forEach(x => x.classList.remove('show'));
+    document.querySelectorAll('.btn-menu').forEach(x => x.classList.remove('open'));
+    if (!wasOpen) { menu.classList.add('show'); btn.classList.add('open'); }
   }
-
-  window.onclick = () => {
-    document.getElementById('cartModal').style.display = 'none';
-    document.querySelectorAll('.menu-content').forEach(m => m.classList.remove('show'));
-    document.querySelectorAll('.btn-menu').forEach(b => b.classList.remove('open'));
-  };
-
+  function setFiltro(tipo, val, txt, el, e) {
+    e.stopPropagation();
+    if (tipo === 'cat') { fCat = val; document.getElementById('lCat').innerText = txt; }
+    else { fMarca = val; document.getElementById('lMar').innerText = txt; }
+    const btn = document.getElementById(tipo === 'cat' ? 'btnCat' : 'btnMar');
+    btn.classList.toggle('active-filter', val !== 'todas');
+    document.querySelectorAll('.menu-content').forEach(x => x.classList.remove('show'));
+    document.querySelectorAll('.btn-menu').forEach(x => x.classList.remove('open'));
+    ejecutarFiltro();
+  }
+  function ejecutarFiltro() {
+    const q = document.getElementById('bus').value.toLowerCase().split(' ');
+    document.querySelectorAll('.card').forEach(c => {
+      const matchCat = fCat === 'todas' || c.dataset.tipo === fCat;
+      const matchMar = fMarca === 'todas' || c.dataset.marca === fMarca;
+      const matchBus = q.every(p => c.dataset.full.toLowerCase().includes(p));
+      c.classList.toggle('hidden', !(matchCat && matchMar && matchBus));
+    });
+  }
+  function toggleCartModal(e) { e.stopPropagation(); const m = document.getElementById('cartModal'); m.style.display = m.style.display === 'block' ? 'none' : 'block'; }
+  function sendWhatsApp() {
+    let msg = "Hola *Frenos Dulanto*, pedido:%0A", t = 0;
+    for (const n in cart) { msg += `• ${cart[n].qty}x ${n} (S/ ${cart[n].price * cart[n].qty})%0A`; t += cart[n].price * cart[n].qty; }
+    window.open(`https://wa.me/51947429347?text=${msg}%0ATOTAL: S/ ${t}`, '_blank');
+  }
+  window.onclick = () => { document.getElementById('cartModal').style.display = 'none'; document.querySelectorAll('.menu-content').forEach(x => x.classList.remove('show')); };
   renderProductos();
 </script>
 </body>
