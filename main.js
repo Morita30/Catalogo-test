@@ -17,6 +17,10 @@ function renderProductos() {
         cont.innerHTML += `
         <div class="card" data-tipo="${p.c}" data-marca="${p.m}" data-full="${p.n} ${p.m}">
           <div class="carousel-container" id="container-${i}" ontouchstart="handleTouchStart(event, ${i})" ontouchend="handleTouchEnd(event, ${i})">
+            
+            <button class="carousel-btn prev" onclick="moveCarouselInfinite(${i}, -1); event.stopPropagation();">‹</button>
+            <button class="carousel-btn next" onclick="moveCarouselInfinite(${i}, 1); event.stopPropagation();">›</button>
+
             <div class="carousel-track" id="track-${i}" data-idx="1" data-cloning="false">
               <img src="${imgUrlBase}"> 
               <img src="${imgUrlBase}"><img src="${imgUrlBase}"><img src="${imgUrlBase}">
@@ -35,7 +39,6 @@ function renderProductos() {
         </div>`;
     });
 }
-
 // 2. LÓGICA DEL CARRUSEL INFINITO
 function handleTouchStart(e, id) { touchStartX = e.changedTouches[0].screenX; }
 
