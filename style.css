@@ -524,33 +524,24 @@ button {
 .carousel-btn.prev { left: 10px; }
 .carousel-btn.next { right: 10px; }
 
-/* Mostrar en Laptop al pasar el mouse */
+/* --- VISIBILIDAD DE FLECHAS SEGÚN DISPOSITIVO --- */
+
+/* 1. Ocultar por completo en pantallas táctiles/celulares */
+@media (max-width: 991px) {
+    .carousel-btn {
+        display: none !important;
+    }
+}
+
+/* 2. Mostrar solo en Laptop/Desktop al pasar el mouse */
 @media (min-width: 992px) {
+    .carousel-btn {
+        display: flex; /* Asegura que se vea el círculo */
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
     .carousel-container:hover .carousel-btn {
         opacity: 1;
     }
-}
-
-/* Mostrar en Celular al tocar la tarjeta */
-@media (max-width: 991px) {
-    .carousel-container:active .carousel-btn,
-    .carousel-container:focus .carousel-btn {
-        opacity: 1;
-    }
-    
-    /* Para que el usuario sepa que puede interactuar */
-    .carousel-btn {
-        width: 36px;
-        height: 36px;
-        background: rgba(255, 255, 255, 0.85);
-    }
-}
-
-/* Mejorar visibilidad de los indicadores sobre la imagen */
-.carousel-indicators {
-    bottom: 12px;
-    background: rgba(0, 0, 0, 0.2);
-    padding: 4px 8px;
-    border-radius: 10px;
-    backdrop-filter: blur(2px);
 }
