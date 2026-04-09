@@ -8,51 +8,39 @@
 </head>
 <body> 
 
-<div class="brand-bar">
-    <img src="logo.png" alt="Frenos Dulanto" class="brand-logo">
-</div>
+    <div class="brand-bar">
+        <img src="logo.png" alt="Frenos Dulanto" class="brand-logo">
+    </div>
 
-<div class="sticky-controls">
-    <div class="header-controls">
-        <input type="text" id="bus" class="search-input" placeholder="🔍 Buscar producto...">
-        
-        <div class="selectors-row">
-            <div class="menu-dropdown">
+    <div class="sticky-controls">
+        <div class="header-controls">
+            <input type="text" id="bus" class="search-input" placeholder="🔍 Buscar producto...">
+            <div class="selectors-row">
                 <button class="btn-menu" id="btnCat">⚙️ <span id="lCat">Piezas</span></button>
-                <div class="menu-content" id="mCat">
-                    </div>
-            </div>
-
-            <div class="menu-dropdown">
                 <button class="btn-menu" id="btnMar">🚗 <span id="lMar">Marcas</span></button>
-                <div class="menu-content" id="mMar">
-                    </div>
+                <button class="btn-cart-header" id="btnCart">
+                    🛒 <span class="badge-header" id="cartBadge">0</span>
+                </button>
             </div>
+        </div>
+    </div> 
 
-            <button class="btn-cart-header" id="btnCart">
-                🛒 <span class="badge-header" id="cartBadge">0</span>
-            </button>
+    <div class="grid" id="contenedor"></div> 
+
+    <div id="cartModal" class="cart-modal">
+        <div class="cart-header"><span>Mi Pedido</span><span id="totalLabel">S/ 0</span></div>
+        <div id="cartList" class="cart-items-list"></div>
+        <button class="btn-whatsapp" id="btnSendWa">Enviar a WhatsApp</button>
+    </div> 
+
+    <div class="modal-overlay" id="productModalOverlay">
+        <div class="modal-content">
+            <button class="close-modal" id="btnCloseModal">✕</button>
+            <div id="modalBody"></div>
         </div>
     </div>
-</div> 
 
-<div class="grid" id="contenedor"></div> 
-
-<div id="cartModal" class="cart-modal">
-    <div class="cart-header">
-        <span>Mi Pedido</span><span id="totalLabel">S/ 0</span>
-    </div>
-    <div id="cartList" class="cart-items-list"></div>
-    <button class="btn-whatsapp" id="btnSendWa">Enviar a WhatsApp</button>
-</div> 
-
-<div class="modal-overlay" id="productModalOverlay">
-    <div class="modal-content">
-        <button class="close-modal" id="btnCloseModal">✕</button>
-        <div id="modalBody"></div>
-    </div>
-</div>
-
-<script src="database.js"></script>
-<script src="script.js"></script> </body>
+    <script src="database.js"></script>
+    <script src="script.js"></script>
+</body>
 </html>
