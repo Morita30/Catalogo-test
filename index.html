@@ -14,8 +14,14 @@
 
     <nav class="sticky-controls">
         <div class="header-controls">
-            <input type="text" id="bus" class="search-input" placeholder="🔍 Buscar producto..." onkeyup="ejecutarFiltro()">
-
+<div class="search-container">
+    <input type="text" id="bus" class="search-input" 
+           placeholder="🔍 Buscar producto..." 
+           onkeyup="ejecutarFiltro()" 
+           autocomplete="off"
+           autocorrect="off" 
+           spellcheck="false">
+</div>
             <div class="selectors-row">
                 <div class="menu-dropdown">
                     <button class="btn-menu" id="btnCat" onclick="toggleMenu('mCat', 'btnCat', event)">

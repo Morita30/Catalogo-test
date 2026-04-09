@@ -163,20 +163,50 @@ body {
     pointer-events: auto;
 }
 
-.menu-item { 
-    padding: 12px; 
-    font-size: 13px; 
-    border-bottom: 1px solid #f2f2f2; 
-    cursor: pointer; 
-    text-align: center; 
+/* --- EFECTOS HOVER Y CLICK EN MENÚS (FILTROS Y BUSCADOR) --- */
+
+/* Estilo base para los ítems de todos los menús */
+.menu-item, .sugerencia-item {
+    padding: 12px 20px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); /* Transición fluida */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--texto-negro);
+    border-bottom: 1px solid #f2f2f7;
+    background-color: white;
 }
 
-.menu-item.active { 
-    background-color: #e3f2fd !important;
-    color: var(--azul-premium) !important;
-    font-weight: bold;
+/* Efecto al pasar el Mouse (Hover) */
+@media (min-width: 992px) {
+    .menu-item:hover, .sugerencia-item:hover {
+        background-color: #f0f7ff; /* Un azul muy claro */
+        color: var(--azul-premium);
+        padding-left: 25px; /* Efecto de desplazamiento a la derecha */
+    }
 }
 
+/* Efecto al hacer Clic (Presionado) */
+.menu-item:active, .sugerencia-item:active {
+    background-color: #e2eefc;
+    transform: scale(0.97); /* Efecto de hundimiento */
+    transition: transform 0.1s;
+}
+
+/* Estilo para el ítem que está seleccionado actualmente */
+.menu-item.active {
+    background-color: #f0f7ff;
+    color: var(--azul-premium);
+    font-weight: 700;
+}
+
+/* Ajuste específico para el contenedor de sugerencias del buscador */
+.sugerencias-desplegable {
+    overflow: hidden; /* Para que el color de hover no se salga de las esquinas */
+    border-radius: 12px;
+}
 /* --- MODAL DEL CARRITO --- */
 #cartModal {
     display: none; 
@@ -545,20 +575,37 @@ button {
         opacity: 1;
     }
 }
-/* --- ANIMACIÓN DE ENTRADA PARA LAS CARDS --- */
-.card {
-    opacity: 0;
-    transform: translateY(20px);
-    animation: cardAppear 0.5s ease forwards;
-}
-
-@keyframes cardAppear {
+/* La animación de "aparecer" */
+@keyframes entradaSuave {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
     to {
         opacity: 1;
         transform: translateY(0);
     }
 }
 
+.card {
+    background: white;
+    border-radius: 15px;
+    padding: 12px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    position: relative;
+    /* Cero animaciones de entrada */
+    opacity: 1 !important; 
+    transform: none !important;
+    display: block;
+    /* Solo dejamos la transición para el hover (el efecto al pasar el mouse) */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* El filtrado debe ser un "apagar y encender" inmediato */
+.card.hidden {
+    display: none !important;
+}
 /* Retraso progresivo para que las cartas aparezcan una tras otra */
 .card:nth-child(1) { animation-delay: 0.1s; }
 .card:nth-child(2) { animation-delay: 0.15s; }
@@ -595,4 +642,81 @@ button {
         background-color: #0069d9;
         box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
     }
+}
+/* --- SUGERENCIAS CON ESTILO DE FILTRO --- */
+.search-container {
+    width: 100%;
+    max-width: 450px;
+    margin: 0 auto;
+}
+
+.search-input {
+    width: 100%;
+    padding: 12px 20px;
+    border: 1px solid #e5e5ea;
+    border-radius: 30px;
+    outline: none;
+    font-size: 16px;
+    text-align: center;
+    transition: all 0.2s ease;
+}
+
+.search-input:focus {
+    border-color: var(--azul-premium);
+    box-shadow: 0 4px 12px rgba(0,123,255,0.1);
+}
+
+/* Reutilizamos tu estilo de menú pero lo adaptamos al buscador */
+.sugerencias-desplegable {
+    display: none; /* Se controla por JS */
+    width: 100% !important; 
+    top: 110% !important; /* Un poco más abajo del input */
+    left: 0 !important;
+    transform: none !important;
+    max-height: 250px;
+    overflow-y: auto;
+    opacity: 1 !important;
+    visibility: visible !important;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+/* Estilo para los ítems (copiando tus .menu-item) */
+.sugerencia-item {
+    padding: 12px 20px;
+    cursor: pointer;
+    font-size: 14px;
+    border-bottom: 1px solid #f2f2f7;
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.2s;
+}
+
+.sugerencia-item:hover {
+    background: #f2f2f7;
+    color: var(--azul-premium);
+}
+
+.sugerencia-marca {
+    font-size: 10px;
+    background: #eee;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #666;
+    text-transform: uppercase;
+}
+.brand-repuesto {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: #e11d48; /* Rojo premium */
+    color: white;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 4px;
+    z-index: 20;
+    text-transform: uppercase;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }

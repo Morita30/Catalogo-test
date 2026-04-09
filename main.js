@@ -1,35 +1,83 @@
-/**
+/*
  * MAIN LOGIC - FRENOS DULANTO
  * Controla el renderizado, filtros, carrusel y carrito.
  */
 
+let productosData = []; // Variable global para los productos
 let cart = {};
 let fCat = 'todas', fMarca = 'todas'; 
 let touchStartX = 0;
 
-// 1. RENDERIZADO DE PRODUCTOS
+// URL DE TU EXCEL (ASEGÚRATE QUE SEA .CSV)
+const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTu6I5Q2X_1DPoltNoto0K2xIoifzR-rd7WLFLv9t6szv2FiZr4gfuAybQ2rs8PFMKI92OJFNBXyANk/pub?gid=0&single=true&output=csv";
+
+// 1. CARGA Y RENDERIZADO
+async function cargarProductos() {
+    try {
+        const response = await fetch(SHEET_URL);
+        const data = await response.text();
+        
+        const filas = data.split("\n").slice(1); // Ignorar cabecera
+        productosData = filas.map(linea => {
+            const columnas = linea.split(",");
+            
+            // Estructura de fotos (Columnas F, G, H -> índices 5, 6, 7)
+            const imgBase = "https://miniture.b-cdn.net/wp-content/uploads/2023/10/kids_toys_02_1.jpeg";
+            const fotos = [
+                columnas[5] && columnas[5].trim() !== "" ? columnas[5].trim() : imgBase,
+                columnas[6] && columnas[6].trim() !== "" ? columnas[6].trim() : imgBase,
+                columnas[7] && columnas[7].trim() !== "" ? columnas[7].trim() : imgBase
+            ];
+
+            return {
+                n: columnas[0] ? columnas[0].trim() : "Producto sin nombre",
+                m: columnas[1] ? columnas[1].trim().toLowerCase() : "genérico",
+                c: columnas[2] ? columnas[2].trim().toLowerCase() : "varios",
+                p: columnas[3] ? parseInt(columnas[3].trim()) : 0,
+                brand: columnas[4] ? columnas[4].trim() : "", // Columna E: Marca del Repuesto
+                imgs: fotos 
+            };
+        });
+        renderProductos(); 
+    } catch (e) {
+        console.error("Error al cargar productos de Sheets:", e);
+    }
+}
+
 function renderProductos() {
     const cont = document.getElementById('contenedor');
     if(!cont) return;
-    cont.innerHTML = "";
+    
+    let htmlFinal = "";
     
     productosData.forEach((p, i) => {
-        cont.innerHTML += `
-        <div class="card" data-tipo="${p.c}" data-marca="${p.m}" data-full="${p.n} ${p.m}">
+        const carruselHTML = `
+            <img src="${p.imgs[2]}">
+            <img src="${p.imgs[0]}">
+            <img src="${p.imgs[1]}">
+            <img src="${p.imgs[2]}">
+            <img src="${p.imgs[0]}">
+        `;
+
+        // Solo mostramos la etiqueta de marca si existe en el Excel
+        const labelMarca = p.brand ? `<div class="brand-repuesto">${p.brand}</div>` : "";
+
+        htmlFinal += `
+        <div class="card" data-tipo="${p.c}" data-marca="${p.m}" data-full="${p.n} ${p.m} ${p.brand}">
           <div class="carousel-container" id="container-${i}" ontouchstart="handleTouchStart(event, ${i})" ontouchend="handleTouchEnd(event, ${i})">
             
+            ${labelMarca}
+
             <button class="carousel-btn prev" onclick="moveCarouselInfinite(${i}, -1); event.stopPropagation();">‹</button>
             <button class="carousel-btn next" onclick="moveCarouselInfinite(${i}, 1); event.stopPropagation();">›</button>
 
             <div class="carousel-track" id="track-${i}" data-idx="1" data-cloning="false">
-              <img src="${imgUrlBase}"> 
-              <img src="${imgUrlBase}"><img src="${imgUrlBase}"><img src="${imgUrlBase}">
-              <img src="${imgUrlBase}">
+              ${carruselHTML}
             </div>
             <div class="carousel-indicators">
-              <span class="dot active" data-dot="0"></span>
-              <span class="dot" data-dot="1"></span>
-              <span class="dot" data-dot="2"></span>
+              <span class="dot active"></span>
+              <span class="dot"></span>
+              <span class="dot"></span>
             </div>
           </div>
           <div class="brand-tag">${p.m}</div>
@@ -38,10 +86,12 @@ function renderProductos() {
           <button class="btn-add" onclick="addToCart('${p.n}', ${p.p}, event)">Añadir</button>
         </div>`;
     });
+    cont.innerHTML = htmlFinal;
 }
-// 2. LÓGICA DEL CARRUSEL INFINITO
-function handleTouchStart(e, id) { touchStartX = e.changedTouches[0].screenX; }
 
+// ... (Resto de funciones: Lógica del carrusel, Filtros, Carrito y Utilidades se mantienen exactamente igual)
+
+function handleTouchStart(e, id) { touchStartX = e.changedTouches[0].screenX; }
 function handleTouchEnd(e, id) {
     let touchEndX = e.changedTouches[0].screenX;
     let diff = touchStartX - touchEndX;
@@ -52,21 +102,15 @@ function moveCarouselInfinite(id, dir) {
     const track = document.getElementById(`track-${id}`);
     const container = document.getElementById(`container-${id}`);
     if (!track || track.getAttribute('data-cloning') === 'true') return;
-
     const indicators = container.querySelectorAll('.dot');
     let currentIdx = parseInt(track.getAttribute('data-idx'));
     let nextIdx = currentIdx + dir;
-
     track.classList.remove('no-transition');
     track.style.transform = `translateX(-${nextIdx * 20}%)`;
     track.setAttribute('data-idx', nextIdx);
-
-    // Actualizar indicadores (dots)
     let indicatorIdx = (nextIdx === 4) ? 0 : (nextIdx === 0) ? 2 : nextIdx - 1;
     indicators.forEach(i => i.classList.remove('active'));
     if(indicators[indicatorIdx]) indicators[indicatorIdx].classList.add('active');
-
-    // Efecto infinito (salto sin transición)
     if (nextIdx === 0 || nextIdx === 4) {
         track.setAttribute('data-cloning', 'true');
         setTimeout(() => {
@@ -79,7 +123,6 @@ function moveCarouselInfinite(id, dir) {
     }
 }
 
-// 3. FILTROS Y BÚSQUEDA
 function ejecutarFiltro() {
     const query = document.getElementById('bus').value.toLowerCase().trim();
     const palabras = query.split(/\s+/); 
@@ -94,15 +137,8 @@ function ejecutarFiltro() {
 
 function setFiltro(tipo, val, txt, el, e) {
     e.stopPropagation();
-    if(tipo === 'cat') { 
-        fCat = val; 
-        document.getElementById('lCat').innerText = txt; 
-        document.getElementById('btnCat').classList.toggle('active-filter', val !== 'todas');
-    } else { 
-        fMarca = val; 
-        document.getElementById('lMar').innerText = txt; 
-        document.getElementById('btnMar').classList.toggle('active-filter', val !== 'todas');
-    }
+    if(tipo === 'cat') { fCat = val; document.getElementById('lCat').innerText = txt; document.getElementById('btnCat').classList.toggle('active-filter', val !== 'todas'); }
+    else { fMarca = val; document.getElementById('lMar').innerText = txt; document.getElementById('btnMar').classList.toggle('active-filter', val !== 'todas'); }
     const menuId = (tipo === 'cat' ? 'mCat' : 'mMar');
     document.querySelectorAll(`#${menuId} .menu-item`).forEach(i => i.classList.remove('active'));
     el.classList.add('active');
@@ -110,7 +146,6 @@ function setFiltro(tipo, val, txt, el, e) {
     ejecutarFiltro();
 }
 
-// 4. CARRITO DE COMPRAS
 function addToCart(name, price, event) {
     if (cart[name]) cart[name].qty++; else cart[name] = { price, qty: 1 };
     updateCartUI();
@@ -134,8 +169,10 @@ function updateCartUI() {
           </div>
         </div>`;
     }
-    document.getElementById('cartBadge').innerText = count;
-    document.getElementById('totalLabel').innerText = `S/ ${total}`;
+    const badge = document.getElementById('cartBadge');
+    if(badge) badge.innerText = count;
+    const totalLab = document.getElementById('totalLabel');
+    if(totalLab) totalLab.innerText = `S/ ${total}`;
 }
 
 function changeQty(name, delta, e) {
@@ -147,36 +184,28 @@ function changeQty(name, delta, e) {
 
 function animateFlyer(event) {
     const btnCart = document.getElementById('btnCart');
+    if(!btnCart) return;
     const rectCart = btnCart.getBoundingClientRect();
     const flyer = document.createElement('div');
     flyer.className = 'flying-item';
     flyer.style.left = `${event.clientX - 20}px`;
     flyer.style.top = `${event.clientY - 20}px`;
     document.body.appendChild(flyer);
-
     setTimeout(() => {
         flyer.style.left = `${rectCart.left + (rectCart.width / 2) - 20}px`;
         flyer.style.top = `${rectCart.top + (rectCart.height / 2) - 20}px`;
         flyer.style.transform = 'scale(0.1)';
         flyer.style.opacity = '0';
     }, 10);
-    setTimeout(() => {
-        flyer.remove();
-        btnCart.style.transform = 'scale(1.3)';
-        setTimeout(() => btnCart.style.transform = 'scale(1)', 200);
-    }, 700);
+    setTimeout(() => { flyer.remove(); btnCart.style.transform = 'scale(1.3)'; setTimeout(() => btnCart.style.transform = 'scale(1)', 200); }, 700);
 }
 
-// 5. UTILIDADES (MENÚS Y WHATSAPP)
 function toggleMenu(menuId, btnId, e) {
     e.stopPropagation();
     const menu = document.getElementById(menuId);
     const isShowing = menu.classList.contains('show');
     closeAllMenus();
-    if(!isShowing) {
-        menu.classList.add('show');
-        document.getElementById(btnId).classList.add('open');
-    }
+    if(!isShowing) { menu.classList.add('show'); document.getElementById(btnId).classList.add('open'); }
 }
 
 function toggleCartModal(e) {
@@ -190,7 +219,8 @@ function toggleCartModal(e) {
 function closeAllMenus() {
     document.querySelectorAll('.menu-content').forEach(m => m.classList.remove('show'));
     document.querySelectorAll('.btn-menu').forEach(b => b.classList.remove('open'));
-    document.getElementById('cartModal').style.display = 'none';
+    const modal = document.getElementById('cartModal');
+    if(modal) modal.style.display = 'none';
 }
 
 function sendWhatsApp() {
@@ -205,6 +235,4 @@ function sendWhatsApp() {
 }
 
 window.onclick = () => closeAllMenus();
-
-// Inicialización
-renderProductos();
+document.addEventListener('DOMContentLoaded', cargarProductos);
