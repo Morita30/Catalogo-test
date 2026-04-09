@@ -135,21 +135,33 @@ body {
 
 /* --- MENÚS DESPLEGABLES --- */
 .menu-content { 
-    display: none; 
     position: absolute; 
     top: 110%; 
     left: 0; 
     width: 100%; 
-    background: white; 
-    border-radius: 12px; 
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 14px; 
     z-index: 10002; 
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15); 
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15); 
     border: 1px solid #eee; 
     overflow-y: auto; 
     max-height: 300px;
-}
 
-.menu-content.show { display: block; }
+    /* 🔥 animación */
+    opacity: 0;
+    transform: translateY(-12px) scale(0.96);
+    transform-origin: top;
+    pointer-events: none;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* efecto glass */
+    backdrop-filter: blur(12px);
+}
+.menu-content.show { 
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+}
 
 .menu-item { 
     padding: 12px; 
@@ -181,15 +193,35 @@ body {
 }
 
 /* --- GRID DE PRODUCTOS --- */
-.grid { 
-    display: grid; 
-    grid-template-columns: repeat(2, 1fr); 
-    gap: 10px; 
-    padding: 10px; 
+/* Base (celular) */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    padding: 10px;
 }
 
+/* Tablet */
+@media (min-width: 600px) {
+    .grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Laptop */
+@media (min-width: 992px) {
+    .grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* Monitor grande */
+@media (min-width: 1400px) {
+    .grid {
+        grid-template-columns: repeat(5, 1fr);
+    }
+}
 .card { 
-    position: relative;
     background: white; 
     border-radius: 18px; 
     padding: 10px; 
@@ -260,118 +292,18 @@ body {
 
 .hidden { display: none !important; }
 
-
-/* ===== MODAL PRO ===== */
-.modal {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.5);
-    display: none;
-    justify-content: center;
-    align-items: flex-end;
-    z-index: 99999;
-}
-
-.modal.show {
-    display: flex;
-}
-
-.modal-content {
-    background: white;
-    width: 100%;
-    max-width: 500px;
-    border-radius: 20px 20px 0 0;
-    padding: 15px;
-    animation: slideUp 0.3s ease;
-    position: relative;
-}
-
-@keyframes slideUp {
-    from {
-        transform: translateY(100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
+/* Fuerza 4 columnas en pantallas de más de 992px (Laptops) */
+@media screen and (min-width: 992px) {
+    .grid {
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 20px;
+        padding: 20px;
     }
 }
 
-.modal-img {
-    width: 100%;
-    border-radius: 12px;
-    margin-bottom: 10px;
-}
-
-.modal-body {
-    text-align: center;
-}
-
-.modal-brand {
-    font-size: 12px;
-    color: var(--azul-premium);
-    font-weight: bold;
-    text-transform: uppercase;
-}
-
-.modal-price {
-    font-size: 20px;
-    font-weight: bold;
-    margin: 10px 0;
-}
-
-.modal-btn {
-    width: 100%;
-    padding: 14px;
-    background: var(--verde-wa);
-    color: white;
-    border: none;
-    border-radius: 12px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.close-modal {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    font-size: 18px;
-    cursor: pointer;
-}
-
-/* ===== BADGES PRO ===== */
-.badge {
-    position: absolute;
-    top: 8px;
-    left: 8px;
-    padding: 4px 8px;
-    font-size: 10px;
-    font-weight: 800;
-    border-radius: 6px;
-    color: white;
-    z-index: 20;
-    animation: fadeInBadge 0.5s ease;
-}
-
-/* Más vendido */
-.badge-top {
-    background: linear-gradient(45deg, #ff9800, #ff5722);
-}
-
-/* Oferta */
-.badge-offer {
-    top: 30px;
-    background: linear-gradient(45deg, #e53935, #ff1744);
-}
-
-/* Animación */
-@keyframes fadeInBadge {
-    from {
-        opacity: 0;
-        transform: translateY(-5px) scale(0.9);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
+/* Si la pantalla es muy grande (Monitores), sube a 5 columnas */
+@media screen and (min-width: 1200px) {
+    .grid {
+        grid-template-columns: repeat(5, 1fr) !important;
     }
 }
