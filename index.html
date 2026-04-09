@@ -75,5 +75,25 @@
 
     <script src="database.js"></script>
     <script src="main.js"></script>
+<!-- MODAL PRODUCTO -->
+<div id="productModal" class="modal">
+  <div class="modal-content" id="modalContent">
+
+    <span class="close-modal" onclick="closeModal()">✕</span>
+
+    <img id="modalImg" class="modal-img" src="">
+
+    <div class="modal-body">
+      <span id="modalBrand" class="modal-brand"></span>
+      <h2 id="modalTitle"></h2>
+      <p id="modalPrice" class="modal-price"></p>
+
+      <button class="modal-btn" onclick="addToCart(modalProduct.n, modalProduct.p, event)">
+        Añadir al carrito 🛒
+      </button>
+    </div>
+
+  </div>
+</div>
 </body>
 </html>
