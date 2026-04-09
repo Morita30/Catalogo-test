@@ -3,260 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Frenos Dulanto - Catálogo Profesional</title>
+    <title>Frenos Dulanto - Catálogo</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body> 
 
 <div class="brand-bar">
-  <img src="logo.png" alt="Logo Frenos Dulanto" class="brand-logo">
+    <img src="logo.png" alt="Frenos Dulanto" class="brand-logo">
 </div>
 
 <div class="sticky-controls">
-  <div class="header-controls">
-    <input type="text" id="bus" class="search-input" placeholder="🔍 Buscar producto..." onkeyup="ejecutarFiltro()">
-    
-    <div class="selectors-row">
-      <div class="menu-dropdown">
-        <button class="btn-menu" onclick="toggleMenu('mCat', event)">⚙️ <span id="lCat">Pieza</span></button>
-        <div class="menu-content" id="mCat">
-          <div class="menu-item active" onclick="setFiltro('cat', 'todas', 'Todas', this, event)">Todas</div>
-          <div class="menu-item" onclick="setFiltro('cat', 'pastilla', 'Pastillas', this, event)">Pastillas</div>
-          <div class="menu-item" onclick="setFiltro('cat', 'disco', 'Discos', this, event)">Discos</div>
-          <div class="menu-item" onclick="setFiltro('cat', 'zapata', 'Zapatas', this, event)">Zapatas</div>
-          <div class="menu-item" onclick="setFiltro('cat', 'amortiguador', 'Amortiguadores', this, event)">Amortiguadores</div>
-          <div class="menu-item" onclick="setFiltro('cat', 'radiador', 'Radiadores', this, event)">Radiadores</div>
-          <div class="menu-item" onclick="setFiltro('cat', 'embrague', 'Embragues', this, event)">Embragues</div>
+    <div class="header-controls">
+        <input type="text" id="bus" class="search-input" placeholder="🔍 Buscar producto...">
+        
+        <div class="selectors-row">
+            <div class="menu-dropdown">
+                <button class="btn-menu" id="btnCat">⚙️ <span id="lCat">Piezas</span></button>
+                <div class="menu-content" id="mCat">
+                    </div>
+            </div>
+
+            <div class="menu-dropdown">
+                <button class="btn-menu" id="btnMar">🚗 <span id="lMar">Marcas</span></button>
+                <div class="menu-content" id="mMar">
+                    </div>
+            </div>
+
+            <button class="btn-cart-header" id="btnCart">
+                🛒 <span class="badge-header" id="cartBadge">0</span>
+            </button>
         </div>
-      </div>
-
-      <div class="menu-dropdown">
-        <button class="btn-menu" onclick="toggleMenu('mMar', event)">🚗 <span id="lMar">Marcas</span></button>
-        <div class="menu-content" id="mMar">
-          <div class="menu-item active" onclick="setFiltro('marca', 'todas', 'Todas', this, event)">Todas</div>
-          <div class="menu-item" onclick="setFiltro('marca', 'toyota', 'Toyota', this, event)">Toyota</div>
-          <div class="menu-item" onclick="setFiltro('marca', 'nissan', 'Nissan', this, event)">Nissan</div>
-          <div class="menu-item" onclick="setFiltro('marca', 'hyundai', 'Hyundai', this, event)">Hyundai</div>
-          <div class="menu-item" onclick="setFiltro('marca', 'kia', 'Kia', this, event)">Kia</div>
-          <div class="menu-item" onclick="setFiltro('marca', 'mitsubishi', 'Mitsubishi', this, event)">Mitsubishi</div>
-        </div>
-      </div>
-
-      <button class="btn-cart-header" id="btnCart" onclick="toggleCartModal(event)">
-        🛒 <span class="badge-header" id="cartBadge">0</span>
-      </button>
-
     </div>
-  </div>
-</div> 
-
-<div id="cartModal">
-  <div style="font-weight:800; display:flex; justify-content:space-between; border-bottom:1px solid #eee; padding-bottom:8px;">
-    <span>Mi Pedido</span><span id="totalLabel">S/ 0</span>
-  </div>
-  <div class="cart-items-list" id="cartList"></div>
-  <button style="background:var(--verde-wa); color:white; border:none; width:100%; padding:14px; border-radius:12px; font-weight:700; cursor:pointer; margin-top:10px;" onclick="sendWhatsApp()">WhatsApp</button>
 </div> 
 
 <div class="grid" id="contenedor"></div> 
 
+<div id="cartModal" class="cart-modal">
+    <div class="cart-header">
+        <span>Mi Pedido</span><span id="totalLabel">S/ 0</span>
+    </div>
+    <div id="cartList" class="cart-items-list"></div>
+    <button class="btn-whatsapp" id="btnSendWa">Enviar a WhatsApp</button>
+</div> 
+
+<div class="modal-overlay" id="productModalOverlay">
+    <div class="modal-content">
+        <button class="close-modal" id="btnCloseModal">✕</button>
+        <div id="modalBody"></div>
+    </div>
+</div>
+
 <script src="database.js"></script>
-<script>
-  let cart = {};
-  let fCat = 'todas', fMarca = 'todas'; 
-
-  // --- FUNCIÓN DE RENDERIZADO MEJORADA (Incluye indicadores) ---
-  function renderProductos() {
-    const cont = document.getElementById('contenedor');
-    cont.innerHTML = "";
-    productosData.forEach((p, i) => {
-      cont.innerHTML += `
-        <div class="card" data-tipo="${p.c}" data-marca="${p.m}" data-full="${p.n} ${p.m}">
-          <div class="carousel-container" id="container-${i}" ontouchstart="handleTouchStart(event, ${i})" ontouchend="handleTouchEnd(event, ${i})">
-            <div class="carousel-track" id="track-${i}" data-idx="0">
-              <img src="${imgUrlBase}"><img src="${imgUrlBase}"><img src="${imgUrlBase}">
-            </div>
-            <div class="carousel-indicators">
-              <span class="dot active" data-dot="0"></span>
-              <span class="dot" data-dot="1"></span>
-              <span class="dot" data-dot="2"></span>
-            </div>
-          </div>
-          <div class="brand-tag">${p.m}</div>
-          <h3 style="font-size:12px; margin:3px 0; min-height:30px;">${p.n}</h3>
-          <div class="price-tag">S/ ${p.p}.00</div>
-          <button class="btn-add" onclick="addToCart('${p.n}', ${p.p}, event)">Añadir</button>
-        </div>`;
-    });
-  }
-
-  // --- NUEVA LÓGICA DE CARRUSEL (Infinita y con Indicadores) ---
-  let touchStartX = 0;
-  function handleTouchStart(e, id) { touchStartX = e.changedTouches[0].screenX; }
-  function handleTouchEnd(e, id) {
-    let touchEndX = e.changedTouches[0].screenX;
-    let diff = touchStartX - touchEndX;
-    if (Math.abs(diff) > 40) moveCarouselInfinite(id, diff > 0 ? 1 : -1);
-  }
-
-  function moveCarouselInfinite(id, dir) {
-    const container = document.getElementById(`container-${id}`);
-    const track = document.getElementById(`track-${id}`);
-    const indicators = container.querySelectorAll('.dot');
-    if(!track) return;
-
-    let currentIdx = parseInt(track.getAttribute('data-idx'));
-    
-    // Nueva posición con lógica infinita (Sin fin)
-    let nextIdx = (currentIdx + dir + 3) % 3;
-
-    // Movimiento
-    track.style.transform = `translateX(-${nextIdx * 33.333}%)`;
-    track.setAttribute('data-idx', nextIdx);
-
-    // Actualizar Indicadores
-    indicators.forEach(i => i.classList.remove('active'));
-    indicators[nextIdx].classList.add('active');
-  }
-
-  // --- LÓGICA DE FUNCIONAMIENTO ---
-  function ejecutarFiltro() {
-    const query = document.getElementById('bus').value.toLowerCase().trim();
-    const palabras = query.split(/\s+/); 
-    document.querySelectorAll('.card').forEach(c => {
-      const txt = c.getAttribute('data-full').toLowerCase();
-      const matchCat = (fCat === 'todas' || c.getAttribute('data-tipo') === fCat);
-      const matchMar = (fMarca === 'todas' || c.getAttribute('data-marca') === fMarca); 
-      const matchBus = palabras.every(p => txt.includes(p)); 
-      if (matchCat && matchMar && matchBus) c.classList.remove('hidden'); else c.classList.add('hidden');
-    });
-  }
-
-  function addToCart(name, price, event) {
-    // 1. Sumar al carrito como siempre
-    if (cart[name]) cart[name].qty++; else cart[name] = { price, qty: 1 };
-    updateCartUI();
-
-    // 2. CREAR EL EFECTO DE VUELO
-    const btnCart = document.getElementById('btnCart');
-    const rectCart = btnCart.getBoundingClientRect(); // Posición del carrito
-
-    const flyer = document.createElement('div');
-    flyer.className = 'flying-item';
-    
-    // El objeto nace donde hiciste clic (event.clientX y Y)
-    flyer.style.left = `${event.clientX - 20}px`;
-    flyer.style.top = `${event.clientY - 20}px`;
-    
-    document.body.appendChild(flyer);
-
-    // Animamos el viaje hacia el carrito
-    setTimeout(() => {
-        flyer.style.left = `${rectCart.left + (rectCart.width / 2) - 20}px`;
-        flyer.style.top = `${rectCart.top + (rectCart.height / 2) - 20}px`;
-        flyer.style.transform = 'scale(0.1)'; // Se hace chiquito al llegar
-        flyer.style.opacity = '0';
-    }, 10);
-
-    // Borramos el objeto al terminar y hacemos que el carrito "brinque"
-    setTimeout(() => {
-        flyer.remove();
-        btnCart.style.transition = 'transform 0.2s';
-        btnCart.style.transform = 'scale(1.3)'; // Brinco
-        setTimeout(() => btnCart.style.transform = 'scale(1)', 200);
-    }, 700);
-}
-
-
-  function changeQty(name, delta, e) {
-    e.stopPropagation();
-    cart[name].qty += delta;
-    if (cart[name].qty <= 0) delete cart[name];
-    updateCartUI();
-  } 
-
-  function updateCartUI() {
-    const list = document.getElementById('cartList');
-    let total = 0, count = 0;
-    list.innerHTML = "";
-    for (const n in cart) {
-      total += cart[n].price * cart[n].qty;
-      count += cart[n].qty;
-      list.innerHTML += `<div class="cart-item">
-        <div style="text-align:left; font-size:12px"><strong>${n}</strong><br>S/ ${cart[n].price * cart[n].qty}</div>
-        <div style="display:flex; align-items:center; gap:5px">
-          <button style="background:#f0f0f5; border:none; width:26px; height:26px; border-radius:6px;" onclick="changeQty('${n}', -1, event)">-</button>
-          <span style="font-weight:700">${cart[n].qty}</span>
-          <button style="background:#f0f0f5; border:none; width:26px; height:26px; border-radius:6px;" onclick="changeQty('${n}', 1, event)">+</button>
-        </div>
-      </div>`;
-    }
-    document.getElementById('cartBadge').innerText = count;
-    document.getElementById('totalLabel').innerText = `S/ ${total}`;
-  } 
-
-  function toggleMenu(id, e) {
-    e.stopPropagation();
-    const menu = document.getElementById(id);
-    const showing = menu.classList.contains('show');
-    document.querySelectorAll('.menu-content').forEach(m => m.classList.remove('show'));
-    if(!showing) menu.classList.add('show');
-    document.getElementById('cartModal').style.display = 'none';
-  } 
-
-  function setFiltro(tipo, val, txt, el, e) {
-  e.stopPropagation();
-  
-  // 1. Guardar el valor y actualizar el texto del botón
-  if(tipo === 'cat') { 
-    fCat = val; 
-    document.getElementById('lCat').innerText = txt; 
-    // Si es 'todas', quitamos el color celeste, si no, lo ponemos
-    const btn = document.getElementById('lCat').parentElement;
-    if(val === 'todas') btn.classList.remove('active-filter');
-    else btn.classList.add('active-filter');
-  } 
-  else { 
-    fMarca = val; 
-    document.getElementById('lMar').innerText = txt; 
-    const btn = document.getElementById('lMar').parentElement;
-    if(val === 'todas') btn.classList.remove('active-filter');
-    else btn.classList.add('active-filter');
-  }
-
-  // 2. Marcar como activo el item dentro del menú
-  document.querySelectorAll(`#m${tipo === 'cat' ? 'Cat' : 'Mar'} .menu-item`).forEach(i => i.classList.remove('active'));
-  el.classList.add('active');
-
-  // 3. Cerrar menús y filtrar
-  document.querySelectorAll('.menu-content').forEach(m => m.classList.remove('show'));
-  ejecutarFiltro();
-}
-
-  function toggleCartModal(e) {
-    e.stopPropagation();
-    const m = document.getElementById('cartModal');
-    m.style.display = m.style.display === 'block' ? 'none' : 'block';
-    document.querySelectorAll('.menu-content').forEach(m => m.classList.remove('show'));
-  }
-
-  function sendWhatsApp() {
-    let msg = "Hola *Frenos Dulanto*, mi pedido:%0A";
-    let t = 0;
-    for (const n in cart) {
-      msg += `• ${cart[n].qty} x ${n} - S/ ${cart[n].price * cart[n].qty}%0A`;
-      t += cart[n].price * cart[n].qty;
-    }
-    msg += `%0ATOTAL: S/ ${t}.00`;
-    window.open(`https://wa.me/51947429347?text=${msg}`, '_blank');
-  } 
-
-  window.onclick = () => {
-    document.getElementById('cartModal').style.display = 'none';
-    document.querySelectorAll('.menu-content').forEach(m => m.classList.remove('show'));
-  };
-
-  renderProductos();
-</script>
-</body>
+<script src="script.js"></script> </body>
 </html>
