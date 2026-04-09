@@ -545,3 +545,54 @@ button {
         opacity: 1;
     }
 }
+/* --- ANIMACIÓN DE ENTRADA PARA LAS CARDS --- */
+.card {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: cardAppear 0.5s ease forwards;
+}
+
+@keyframes cardAppear {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Retraso progresivo para que las cartas aparezcan una tras otra */
+.card:nth-child(1) { animation-delay: 0.1s; }
+.card:nth-child(2) { animation-delay: 0.15s; }
+.card:nth-child(3) { animation-delay: 0.2s; }
+.card:nth-child(4) { animation-delay: 0.25s; }
+
+/* Efecto Hover en las Cards (Laptop) */
+@media (min-width: 992px) {
+    .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+}
+
+/* --- ANIMACIÓN DE LOS BOTONES DE AÑADIR --- */
+.btn-add {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Efecto al presionar (Feedback) */
+.btn-add:active {
+    transform: scale(0.92);
+    background-color: #0056b3; /* Un azul más oscuro al pulsar */
+}
+
+/* Brillo sutil al pasar el mouse en laptop */
+@media (min-width: 992px) {
+    .btn-add:hover {
+        background-color: #0069d9;
+        box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+    }
+}
