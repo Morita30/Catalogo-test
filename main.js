@@ -236,3 +236,17 @@ function sendWhatsApp() {
 
 window.onclick = () => closeAllMenus();
 document.addEventListener('DOMContentLoaded', cargarProductos);
+// Función para quitar la pantalla de carga
+function quitarCarga() {
+    const pantalla = document.getElementById('pantalla-carga');
+    if (pantalla) {
+        pantalla.style.opacity = '0';
+        setTimeout(() => {
+            pantalla.style.display = 'none';
+        }, 500);
+    }
+}
+
+// Llama a esta función después de que tus productos se dibujen en pantalla
+// Si usas un fetch, ponlo dentro del último .then()
+setTimeout(quitarCarga, 1500); 
