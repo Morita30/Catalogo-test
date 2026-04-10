@@ -8,7 +8,7 @@ let cart = {};
 let fCat = 'todas', fMarca = 'todas'; 
 let touchStartX = 0;
 
-// URL DE TU EXCEL (ASEGÚRATE QUE SEA .CSV)
+// URL DE TU EXCEL (YA CONFIGURADO COMO CSV)
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTu6I5Q2X_1DPoltNoto0K2xIoifzR-rd7WLFLv9t6szv2FiZr4gfuAybQ2rs8PFMKI92OJFNBXyANk/pub?gid=0&single=true&output=csv";
 
 // 1. CARGA Y RENDERIZADO
@@ -16,11 +16,11 @@ async function cargarProductos() {
     try {
         const response = await fetch(SHEET_URL);
         const data = await response.text();
-        
+
         const filas = data.split("\n").slice(1); // Ignorar cabecera
         productosData = filas.map(linea => {
             const columnas = linea.split(",");
-            
+
             // Estructura de fotos (Columnas F, G, H -> índices 5, 6, 7)
             const imgBase = "https://miniture.b-cdn.net/wp-content/uploads/2023/10/kids_toys_02_1.jpeg";
             const fotos = [
@@ -47,9 +47,9 @@ async function cargarProductos() {
 function renderProductos() {
     const cont = document.getElementById('contenedor');
     if(!cont) return;
-    
+
     let htmlFinal = "";
-    
+
     productosData.forEach((p, i) => {
         const carruselHTML = `
             <img src="${p.imgs[2]}">
@@ -59,7 +59,6 @@ function renderProductos() {
             <img src="${p.imgs[0]}">
         `;
 
-        // Solo mostramos la etiqueta de marca si existe en el Excel
         const labelMarca = p.brand ? `<div class="brand-repuesto">${p.brand}</div>` : "";
 
         htmlFinal += `
@@ -89,8 +88,7 @@ function renderProductos() {
     cont.innerHTML = htmlFinal;
 }
 
-// ... (Resto de funciones: Lógica del carrusel, Filtros, Carrito y Utilidades se mantienen exactamente igual)
-
+// LÓGICA DEL CARRUSEL
 function handleTouchStart(e, id) { touchStartX = e.changedTouches[0].screenX; }
 function handleTouchEnd(e, id) {
     let touchEndX = e.changedTouches[0].screenX;
@@ -123,6 +121,7 @@ function moveCarouselInfinite(id, dir) {
     }
 }
 
+// FILTROS
 function ejecutarFiltro() {
     const query = document.getElementById('bus').value.toLowerCase().trim();
     const palabras = query.split(/\s+/); 
@@ -146,6 +145,7 @@ function setFiltro(tipo, val, txt, el, e) {
     ejecutarFiltro();
 }
 
+// CARRITO
 function addToCart(name, price, event) {
     if (cart[name]) cart[name].qty++; else cart[name] = { price, qty: 1 };
     updateCartUI();
@@ -200,6 +200,7 @@ function animateFlyer(event) {
     setTimeout(() => { flyer.remove(); btnCart.style.transform = 'scale(1.3)'; setTimeout(() => btnCart.style.transform = 'scale(1)', 200); }, 700);
 }
 
+// MENÚS Y WHATSAPP
 function toggleMenu(menuId, btnId, e) {
     e.stopPropagation();
     const menu = document.getElementById(menuId);
@@ -235,27 +236,21 @@ function sendWhatsApp() {
 }
 
 window.onclick = () => closeAllMenus();
-// CONFIGURACIÓN DE ARRANQUE
+
+// CONFIGURACIÓN DE ARRANQUE (PANTALLA CARGA + FETCH)
 window.addEventListener('load', () => {
-    // 1. Empezamos a cargar los productos de Google Sheets de inmediato
-    cargarProductos();
+    cargarProductos(); // Cargamos los datos de Google
 
     const pantalla = document.getElementById('pantalla-carga');
-
-    // 2. Control de la pantalla de inicio (Splash Screen)
     setTimeout(() => {
         if (pantalla) {
             pantalla.style.opacity = '0';
-
             setTimeout(() => {
                 pantalla.style.display = 'none';
-                
-                // 3. Liberamos el scroll para que el cliente pueda bajar
-                document.body.style.overflow = 'visible';
-                document.documentElement.style.overflow = 'visible';
-                
-                console.log("Catálogo listo y scroll liberado");
+                // Liberamos el scroll
+                document.body.style.overflow = 'auto';
+                document.documentElement.style.overflow = 'auto';
             }, 500);
         }
-    }, 2500); // Le damos 2.5 segundos para que se vea bien tu marca
+    }, 2500); // 2.5 seg para que se vea el logo blanco
 });
