@@ -235,22 +235,27 @@ function sendWhatsApp() {
 }
 
 window.onclick = () => closeAllMenus();
+// CONFIGURACIÓN DE ARRANQUE
 window.addEventListener('load', () => {
+    // 1. Empezamos a cargar los productos de Google Sheets de inmediato
+    cargarProductos();
+
     const pantalla = document.getElementById('pantalla-carga');
-    
-    // Esperamos 2 segundos para que se luzca tu logo
+
+    // 2. Control de la pantalla de inicio (Splash Screen)
     setTimeout(() => {
         if (pantalla) {
             pantalla.style.opacity = '0';
-            
-            // IMPORTANTE: Después de medio segundo de desvanecerse, eliminamos el bloqueo
+
             setTimeout(() => {
                 pantalla.style.display = 'none';
                 
-                // ESTA LÍNEA ES LA CLAVE: Devuelve el scroll al usuario
-                document.body.style.overflow = 'auto';
-                document.documentElement.style.overflow = 'auto';
+                // 3. Liberamos el scroll para que el cliente pueda bajar
+                document.body.style.overflow = 'visible';
+                document.documentElement.style.overflow = 'visible';
+                
+                console.log("Catálogo listo y scroll liberado");
             }, 500);
         }
-    }, 2000);
+    }, 2500); // Le damos 2.5 segundos para que se vea bien tu marca
 });
