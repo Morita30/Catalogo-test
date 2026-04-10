@@ -235,18 +235,22 @@ function sendWhatsApp() {
 }
 
 window.onclick = () => closeAllMenus();
-document.addEventListener('DOMContentLoaded', cargarProductos);
-// Función para quitar la pantalla de carga
-function quitarCarga() {
+window.addEventListener('load', () => {
     const pantalla = document.getElementById('pantalla-carga');
-    if (pantalla) {
-        pantalla.style.opacity = '0';
-        setTimeout(() => {
-            pantalla.style.display = 'none';
-        }, 500);
-    }
-}
-
-// Llama a esta función después de que tus productos se dibujen en pantalla
-// Si usas un fetch, ponlo dentro del último .then()
-setTimeout(quitarCarga, 1500); 
+    
+    // Esperamos 2 segundos para que se luzca tu logo
+    setTimeout(() => {
+        if (pantalla) {
+            pantalla.style.opacity = '0';
+            
+            // IMPORTANTE: Después de medio segundo de desvanecerse, eliminamos el bloqueo
+            setTimeout(() => {
+                pantalla.style.display = 'none';
+                
+                // ESTA LÍNEA ES LA CLAVE: Devuelve el scroll al usuario
+                document.body.style.overflow = 'auto';
+                document.documentElement.style.overflow = 'auto';
+            }, 500);
+        }
+    }, 2000);
+});
