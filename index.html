@@ -7,6 +7,16 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body> 
+    <div id="pantalla-carga" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#111; z-index:10000; display:flex; flex-direction:column; align-items:center; justify-content:center; transition: all 0.5s ease;">
+    <h1 style="color:#e31a1a; font-family:sans-serif; letter-spacing:3px;">FRENOS DULANTO</h1>
+    <p style="color:#555; font-size:12px; margin-top:10px;">CARGANDO CATÁLOGO...</p>
+    <div style="margin-top:20px; width:30px; height:30px; border:3px solid #333; border-top:3px solid #e31a1a; border-radius:50%; animation: girar 1s linear infinite;"></div>
+</div>
+
+<style>
+@keyframes girar { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+</style>
+
 
     <header class="brand-bar">
         <img src="logo.png" alt="Logo Frenos Dulanto" class="brand-logo">
