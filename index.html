@@ -7,14 +7,36 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body> 
-    <div id="pantalla-carga" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#111; z-index:10000; display:flex; flex-direction:column; align-items:center; justify-content:center; transition: all 0.5s ease;">
-    <h1 style="color:#e31a1a; font-family:sans-serif; letter-spacing:3px;">FRENOS DULANTO</h1>
-    <p style="color:#555; font-size:12px; margin-top:10px;">CARGANDO CATÁLOGO...</p>
-    <div style="margin-top:20px; width:30px; height:30px; border:3px solid #333; border-top:3px solid #e31a1a; border-radius:50%; animation: girar 1s linear infinite;"></div>
+<div id="pantalla-carga" style="position:fixed; top:0; left:0; width:100vw; height:100vh; background:#000; z-index:999999; display:flex; flex-direction:column; align-items:center; justify-content:center; transition: opacity 0.6s ease; pointer-events: none;">
+    
+    <img src="logo.png" alt="Frenos Dulanto" style="width: 210px; height: auto; display: block; opacity: 0.95;">
+    
+    <div style="margin-top: 60px; width: 120px; height: 1px; background: #222; position: relative; overflow: hidden; border-radius: 1px;">
+        <div class="barra-lujo"></div>
+    </div>
+    
+    <p style="color:#555; font-size:9px; margin-top:20px; letter-spacing:5px; font-family: 'Times New Roman', serif; font-weight: lighter;">EST. 1974</p>
 </div>
 
 <style>
-@keyframes girar { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+/* Animación de seda (suave y continua) */
+.barra-lujo {
+    position: absolute;
+    height: 100%;
+    width: 40%;
+    background: #fff; /* Blanco puro */
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.4); /* Brillo muy tenue */
+    animation: carga-premium 2.2s cubic-bezier(0.445, 0.05, 0.55, 0.95) infinite;
+}
+
+@keyframes carga-premium {
+    0% { left: -100%; }
+    50% { left: 30%; }
+    100% { left: 100%; }
+}
+
+/* Bloqueo de scroll mientras carga */
+body { margin: 0; overflow: hidden; height: 100vh; }
 </style>
 
 
