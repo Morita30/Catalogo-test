@@ -245,3 +245,41 @@ function sendWhatsApp() {
 
 window.onclick = () => closeAllMenus();
 document.addEventListener('DOMContentLoaded', cargarProductos);
+function iniciarVoz() {
+    const btn = document.getElementById('voce-btn');
+    const inputBusqueda = document.getElementById('bus');
+    
+    // Verificar si el navegador soporta reconocimiento de voz
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    
+    if (!SpeechRecognition) {
+        alert("Lo siento, tu navegador no soporta búsqueda por voz.");
+        return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'es-ES'; // Idioma español
+    recognition.interimResults = false; // Solo resultados finales
+    recognition.maxAlternatives = 1;
+
+    recognition.onstart = () => {
+        btn.classList.add('escuchando');
+    };
+
+    recognition.onresult = (event) => {
+        const textoEscuchado = event.results[0][0].transcript;
+        inputBusqueda.value = textoEscuchado;
+        ejecutarFiltro(); // Filtra los productos automáticamente con lo que escuchó
+    };
+
+    recognition.onerror = (event) => {
+        console.error("Error de voz: ", event.error);
+        btn.classList.remove('escuchando');
+    };
+
+    recognition.onend = () => {
+        btn.classList.remove('escuchando');
+    };
+
+    recognition.start();
+}
