@@ -14,14 +14,17 @@
 
     <nav class="sticky-controls">
         <div class="header-controls">
-<div class="search-container">
+<div class="search-container" style="position: relative; display: flex; align-items: center;">
     <input type="text" id="bus" class="search-input" 
            placeholder="🔍 Buscar producto..." 
            onkeyup="ejecutarFiltro()" 
-           autocomplete="off"
-           autocorrect="off" 
-           spellcheck="false">
+           autocomplete="off">
+    <button id="voce-btn" onclick="iniciarVoz()" 
+            style="position: absolute; right: 15px; background: none; border: none; cursor: pointer; font-size: 20px;">
+        🎤
+    </button>
 </div>
+
             <div class="selectors-row">
                 <div class="menu-dropdown">
                     <button class="btn-menu" id="btnCat" onclick="toggleMenu('mCat', 'btnCat', event)">
