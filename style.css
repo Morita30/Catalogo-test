@@ -251,15 +251,23 @@ body {
         grid-template-columns: repeat(5, 1fr);
     }
 }
-.card { 
-    background: white; 
-    border-radius: 18px; 
-    padding: 10px; 
-    display: flex; 
-    flex-direction: column; 
-    text-align: center; 
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05); 
-} 
+.card {
+    background: white;
+    border-radius: 18px;
+    padding: 12px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    /* Filtrado instantáneo sin animaciones que pesen al buscar */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card.hidden {
+    display: none !important;
+}
+
 
 /* --- CARRUSEL --- */
 .carousel-container { 
