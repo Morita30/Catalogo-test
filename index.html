@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frenos Dulanto - Catálogo Profesional</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body> 
+
+    <header class="brand-bar">
+        <img src="logo.png" alt="Logo Frenos Dulanto" class="brand-logo">
+    </header>
+
+    <nav class="sticky-controls">
+        <div class="header-controls">
+<div class="search-container">
+    <input type="text" id="bus" class="search-input" 
+           placeholder="🔍 Buscar producto..." 
+           onkeyup="ejecutarFiltro()" 
+           autocomplete="off"
+           autocorrect="off" 
+           spellcheck="false">
+</div>
+            <div class="selectors-row">
+                <div class="menu-dropdown">
+                    <button class="btn-menu" id="btnCat" onclick="toggleMenu('mCat', 'btnCat', event)">
+                        <span>⚙️ <span id="lCat">Todas</span></span>
+                    </button>
+                    <div class="menu-content" id="mCat">
+                        <div class="menu-item active" onclick="setFiltro('cat', 'todas', 'Todas', this, event)">Todas</div>
+                        <div class="menu-item" onclick="setFiltro('cat', 'pastilla', 'Pastillas', this, event)">Pastillas</div>
+                        <div class="menu-item" onclick="setFiltro('cat', 'disco', 'Discos', this, event)">Discos</div>
+                        <div class="menu-item" onclick="setFiltro('cat', 'zapata', 'Zapatas', this, event)">Zapatas</div>
+                        <div class="menu-item" onclick="setFiltro('cat', 'amortiguador', 'Amortiguadores', this, event)">Amortiguadores</div>
+                        <div class="menu-item" onclick="setFiltro('cat', 'radiador', 'Radiadores', this, event)">Radiadores</div>
+                        <div class="menu-item" onclick="setFiltro('cat', 'embrague', 'Embragues', this, event)">Embragues</div>
+                    </div>
+                </div>
+
+                <div class="menu-dropdown">
+                    <button class="btn-menu" id="btnMar" onclick="toggleMenu('mMar', 'btnMar', event)">
+                        <span>🚗 <span id="lMar">Todas Marcas</span></span>
+                    </button>
+                    <div class="menu-content" id="mMar">
+                        <div class="menu-item active" onclick="setFiltro('marca', 'todas', 'Todas Marcas', this, event)">Todas Marcas</div>
+                        <div class="menu-item" onclick="setFiltro('marca', 'toyota', 'Toyota', this, event)">Toyota</div>
+                        <div class="menu-item" onclick="setFiltro('marca', 'nissan', 'Nissan', this, event)">Nissan</div>
+                        <div class="menu-item" onclick="setFiltro('marca', 'hyundai', 'Hyundai', this, event)">Hyundai</div>
+                        <div class="menu-item" onclick="setFiltro('marca', 'kia', 'Kia', this, event)">Kia</div>
+                        <div class="menu-item" onclick="setFiltro('marca', 'mitsubishi', 'Mitsubishi', this, event)">Mitsubishi</div>
+                    </div>
+                </div>
+
+                <button class="btn-cart-header" id="btnCart" onclick="toggleCartModal(event)">
+                    🛒 <span class="badge-header" id="cartBadge">0</span>
+                </button>
+            </div>
+        </div>
+    </nav> 
+
+    <aside id="cartModal">
+        <div style="font-weight:800; display:flex; justify-content:space-between; border-bottom:1px solid #eee; padding-bottom:8px;">
+            <span>Mi Pedido</span><span id="totalLabel">S/ 0</span>
+        </div>
+        <div class="cart-items-list" id="cartList"></div>
+        <button style="background:var(--verde-wa); color:white; border:none; width:100%; padding:14px; border-radius:12px; font-weight:700; cursor:pointer; margin-top:10px;" onclick="sendWhatsApp()">WhatsApp</button>
+    </aside> 
+
+    <main class="grid" id="contenedor"></main> 
+
+    <script src="database.js"></script>
+    <script src="main.js"></script>
+   <a href="https://wa.me/51947429347?text=Hola%20Frenos%20Dulanto,%20tengo%20una%20consulta" class="wa-container" target="_blank">
+    <div class="wa-message-box">
+        <span class="wa-line-1">¿Dudas con un repuesto?</span>
+        <span class="wa-line-2">¡Escríbenos ahora!</span>
+        <span class="wa-line-3">Atención inmediata</span>
+    </div>
+    <div class="wa-button">
+        <img src="logo.png" alt="WhatsApp" class="wa-logo-img">
+    </div>
+</a>
+</body>
+</html>
