@@ -211,15 +211,16 @@ body {
 #cartModal {
     display: none; 
     position: fixed; 
-    top: 140px; 
+    top: calc(var(--header-height) + 80px); /* Se ajusta dinámicamente al alto de tu cabecera */
     right: 10px; 
-    width: 300px;
-    background: white; 
+    width: 320px;
+    background: rgba(255, 255, 255, 0.98); 
     border-radius: 20px; 
-    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
     z-index: 10005; 
-    padding: 15px; 
+    padding: 20px; 
     border: 1px solid #eee;
+    backdrop-filter: blur(10px);
 }
 
 /* --- GRID DE PRODUCTOS --- */
