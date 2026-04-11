@@ -126,14 +126,23 @@ function moveCarouselInfinite(id, dir) {
 function ejecutarFiltro() {
     const query = document.getElementById('bus').value.toLowerCase().trim();
     const palabras = query.split(/\s+/); 
-    document.querySelectorAll('.card').forEach(c => {
+    const cards = document.querySelectorAll('.card');
+
+    cards.forEach(c => {
         const txt = c.getAttribute('data-full').toLowerCase();
         const matchCat = (fCat === 'todas' || c.getAttribute('data-tipo') === fCat);
         const matchMar = (fMarca === 'todas' || c.getAttribute('data-marca') === fMarca); 
         const matchBus = palabras.every(p => txt.includes(p)); 
-        if (matchCat && matchMar && matchBus) c.classList.remove('hidden'); else c.classList.add('hidden');
+
+        // Uso de classList para activar el display:none del CSS
+        if (matchCat && matchMar && matchBus) {
+            c.classList.remove('hidden');
+        } else {
+            c.classList.add('hidden');
+        }
     });
 }
+
 
 function setFiltro(tipo, val, txt, el, e) {
     e.stopPropagation();
