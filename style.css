@@ -1,0 +1,722 @@
+/* --- CONFIGURACIÓN GLOBAL Y VARIABLES --- */
+:root { 
+    --azul-premium: #007bff; 
+    --verde-wa: #25d366; 
+    --gris-fondo: #f2f2f7; 
+    --texto-negro: #1c1c1e; 
+    --texto-gris: #8e8e93; 
+    --header-height: 70px;
+}
+
+body { 
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+    background-color: var(--gris-fondo); 
+    margin: 0; 
+    padding: 0; 
+    overflow-x: hidden; 
+    color: var(--texto-negro); 
+    -webkit-font-smoothing: antialiased;
+} 
+
+/* --- BARRA DEL TÍTULO (LOGO) --- */
+.brand-bar {
+    background: #000000;
+    padding: 15px 0;
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    border-bottom: 1px solid #333; 
+    position: sticky; 
+    top: 0; 
+    z-index: 10001;
+    height: var(--header-height);
+    box-sizing: border-box;
+}
+
+.brand-logo { 
+    height: 40px; 
+    width: auto; 
+    object-fit: contain; 
+}
+
+/* --- SECCIÓN DE CONTROLES (STICKY) --- */
+.sticky-controls {
+    position: sticky; 
+    top: var(--header-height); 
+    z-index: 10000;
+    background: var(--gris-fondo); 
+    padding: 15px 10px;
+    box-shadow: 0 10px 15px -10px rgba(0,0,0,0.05);
+} 
+
+.header-controls { 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    gap: 12px; 
+}
+
+/* --- BUSCADOR --- */
+.search-input { 
+    width: 100%; 
+    max-width: 450px; 
+    padding: 12px 20px; 
+    border: none; 
+    border-radius: 30px; 
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08); 
+    outline: none; 
+    font-size: 16px; 
+    text-align: center;
+    background: white;
+    box-sizing: border-box;
+}
+
+/* --- FILA DE SELECTORES Y CARRITO --- */
+.selectors-row { 
+    display: flex; 
+    gap: 10px; 
+    width: 100%; 
+    justify-content: center; 
+    align-items: center; 
+    max-width: 500px; 
+} 
+
+.menu-dropdown { flex: 1; position: relative; }
+
+.btn-menu { 
+    background: white; 
+    border: none; 
+    height: 40px; 
+    border-radius: 12px; 
+    font-size: 12px; 
+    font-weight: 700; 
+    cursor: pointer; 
+    width: 100%; 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
+    text-align: center;
+    box-sizing: border-box;
+    transition: background 0.2s;
+}
+
+.btn-menu.active-filter {
+    background-color: #e3f2fd !important;
+    color: var(--azul-premium) !important;
+    border: 1px solid #bbdefb;
+}
+
+.btn-cart-header {
+    background: white;
+    color: #000000;
+    border: none;
+    height: 40px; 
+    width: 50px;  
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    position: relative;
+    box-sizing: border-box;
+}
+
+.badge-header { 
+    background: var(--verde-wa); 
+    color: white; 
+    padding: 2px 6px; 
+    border-radius: 6px; 
+    font-size: 11px; 
+    position: absolute; 
+    top: -5px; 
+    right: -5px; 
+}
+
+/* --- MENÚS DESPLEGABLES --- */
+.menu-content { 
+    position: absolute; 
+    top: 110%; 
+    left: 0; 
+    width: 100%; 
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 14px; 
+    z-index: 10002; 
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15); 
+    border: 1px solid #eee; 
+    overflow-y: auto; 
+    max-height: 300px;
+
+    /* 🔥 animación */
+    opacity: 0;
+    transform: translateY(-12px) scale(0.96);
+    transform-origin: top;
+    pointer-events: none;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* efecto glass */
+    backdrop-filter: blur(12px);
+}
+.menu-content.show { 
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+}
+
+/* --- EFECTOS HOVER Y CLICK EN MENÚS (FILTROS Y BUSCADOR) --- */
+
+/* Estilo base para los ítems de todos los menús */
+.menu-item, .sugerencia-item {
+    padding: 12px 20px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); /* Transición fluida */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--texto-negro);
+    border-bottom: 1px solid #f2f2f7;
+    background-color: white;
+}
+
+/* Efecto al pasar el Mouse (Hover) */
+@media (min-width: 992px) {
+    .menu-item:hover, .sugerencia-item:hover {
+        background-color: #f0f7ff; /* Un azul muy claro */
+        color: var(--azul-premium);
+        padding-left: 25px; /* Efecto de desplazamiento a la derecha */
+    }
+}
+
+/* Efecto al hacer Clic (Presionado) */
+.menu-item:active, .sugerencia-item:active {
+    background-color: #e2eefc;
+    transform: scale(0.97); /* Efecto de hundimiento */
+    transition: transform 0.1s;
+}
+
+/* Estilo para el ítem que está seleccionado actualmente */
+.menu-item.active {
+    background-color: #f0f7ff;
+    color: var(--azul-premium);
+    font-weight: 700;
+}
+
+/* Ajuste específico para el contenedor de sugerencias del buscador */
+.sugerencias-desplegable {
+    overflow: hidden; /* Para que el color de hover no se salga de las esquinas */
+    border-radius: 12px;
+}
+/* --- MODAL DEL CARRITO --- */
+#cartModal {
+    display: none; 
+    position: fixed; 
+    top: 140px; 
+    right: 10px; 
+    width: 300px;
+    background: white; 
+    border-radius: 20px; 
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    z-index: 10005; 
+    padding: 15px; 
+    border: 1px solid #eee;
+}
+
+/* --- GRID DE PRODUCTOS --- */
+/* Base (celular) */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    padding: 10px;
+}
+
+/* Tablet */
+@media (min-width: 600px) {
+    .grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Laptop */
+@media (min-width: 992px) {
+    .grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* Monitor grande */
+@media (min-width: 1400px) {
+    .grid {
+        grid-template-columns: repeat(5, 1fr);
+    }
+}
+.card { 
+    background: white; 
+    border-radius: 18px; 
+    padding: 10px; 
+    display: flex; 
+    flex-direction: column; 
+    text-align: center; 
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05); 
+} 
+
+/* --- CARRUSEL --- */
+.carousel-container { 
+    position: relative; 
+    width: 100%; 
+    aspect-ratio: 1/1; 
+    border-radius: 12px; 
+    overflow: hidden; 
+    margin-bottom: 8px; 
+    background: #eee; 
+    touch-action: pan-y;
+}
+
+.carousel-track { 
+    display: flex; 
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1); 
+    width: 500%; 
+    height: 100%; 
+}
+
+.carousel-track.no-transition { transition: none !important; }
+
+.carousel-track img { 
+    width: 20%; 
+    height: 100%; 
+    object-fit: cover; 
+    pointer-events: none; 
+}
+
+.carousel-indicators {
+    position: absolute; bottom: 8px; left: 50%;
+    transform: translateX(-50%); display: flex; gap: 5px; z-index: 10;
+}
+
+.dot {
+    width: 15px; height: 3px; background: rgba(255,255,255,0.4);
+    border-radius: 3px; transition: all 0.3s ease;
+}
+
+.dot.active { width: 25px; background: white; }
+
+/* --- BOTONES Y TAGS --- */
+.brand-tag { font-size: 9px; color: var(--azul-premium); font-weight: 800; text-transform: uppercase; }
+.price-tag { font-size: 16px; font-weight: 800; margin: 5px 0 10px 0; color: #333; }
+.btn-add { background: var(--azul-premium); color: white; border: none; padding: 10px; border-radius: 10px; font-weight: 700; font-size: 11px; cursor: pointer; } 
+
+.btn-qty { background:#f0f0f5; border:none; width:26px; height:26px; border-radius:6px; cursor:pointer; }
+
+/* --- ANIMACIONES --- */
+.flying-item {
+    position: fixed;
+    width: 40px; height: 40px;
+    background: var(--azul-premium);
+    border-radius: 10px;
+    z-index: 99999;
+    pointer-events: none;
+    transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0.8;
+}
+
+.hidden { display: none !important; }
+
+/* Fuerza 4 columnas en pantallas de más de 992px (Laptops) */
+@media screen and (min-width: 992px) {
+    .grid {
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 20px;
+        padding: 20px;
+    }
+}
+
+/* Si la pantalla es muy grande (Monitores), sube a 5 columnas */
+@media screen and (min-width: 1200px) {
+    .grid {
+        grid-template-columns: repeat(5, 1fr) !important;
+    }
+}
+
+/* =========================
+   ANIMACIONES UI (HOVER + TOUCH)
+========================= */
+
+/* BOTONES DE FILTRO */
+.btn-menu {
+    transition: all 0.2s ease;
+}
+
+.btn-menu:hover {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+}
+
+.btn-menu:active {
+    transform: scale(0.96);
+}
+
+/* BUSCADOR */
+.search-input {
+    transition: all 0.25s ease;
+}
+
+.search-input:hover {
+    box-shadow: 0 6px 15px rgba(0,0,0,0.12);
+}
+
+.search-input:focus {
+    transform: scale(1.02);
+    box-shadow: 0 8px 20px rgba(0,123,255,0.2);
+}
+
+/* CARRITO */
+.btn-cart-header {
+    transition: all 0.2s ease;
+}
+
+.btn-cart-header:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+}
+
+.btn-cart-header:active {
+    transform: scale(0.9);
+}
+
+/* QUITAR FLASH FEO EN CELULAR */
+button {
+    -webkit-tap-highlight-color: transparent;
+}
+/* --- CONTENEDOR FLOTANTE --- */
+.wa-container {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    z-index: 99999;
+}
+
+/* --- BURBUJA DE MENSAJE --- */
+.wa-message {
+    background: white;
+    color: #333;
+    padding: 8px 15px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-right: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    position: relative;
+    white-space: nowrap;
+    animation: fadeInRight 0.5s ease-out;
+}
+
+/* Flechita de la burbuja */
+.wa-message::after {
+    content: '';
+    position: absolute;
+    right: -8px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-left: 8px solid white;
+}
+
+/* --- BOTÓN CIRCULAR CON LOGO --- */
+.wa-button {
+    width: 60px;
+    height: 60px;
+    background-color: var(--verde-wa);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+    transition: all 0.3s ease;
+}
+
+.wa-logo-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: white;
+    object-fit: contain;
+}
+
+/* --- ANIMACIONES Y HOVER --- */
+@keyframes fadeInRight {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+.wa-container:hover .wa-button {
+    transform: scale(1.1) rotate(5deg);
+}
+
+/* --- CONTENEDOR FLOTANTE --- */
+.wa-container {
+    position: fixed;
+    bottom: 25px;
+    right: 20px;
+    display: flex;
+    align-items: flex-end; /* Alinea el texto a la base del logo */
+    text-decoration: none;
+    z-index: 99999;
+}
+
+/* --- BURBUJA DE TEXTO COMPACTA --- */
+.wa-message-box {
+    background: white;
+    color: #333;
+    padding: 8px 12px;
+    border-radius: 15px 15px 2px 15px; /* Esquina inferior derecha cuadrada */
+    margin-right: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.12);
+    display: flex;
+    flex-direction: column; /* Crea las filas de texto */
+    gap: 2px;
+    max-width: 140px; /* Limita el ancho para forzar el orden */
+    animation: fadeInUp 0.5s ease-out;
+}
+
+/* Niveles de texto con letra chica */
+.wa-line-1 { font-size: 11px; font-weight: 700; color: var(--azul-premium); }
+.wa-line-2 { font-size: 10px; font-weight: 600; color: #444; }
+.wa-line-3 { font-size: 9px; font-weight: 400; color: var(--verde-wa); text-transform: uppercase; }
+
+/* --- BOTÓN LOGO --- */
+.wa-button {
+    width: 55px;
+    height: 55px;
+    background-color: var(--verde-wa);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 18px rgba(37, 211, 102, 0.35);
+}
+
+.wa-logo-img {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: white;
+    object-fit: contain;
+}
+
+/* --- ANIMACIÓN --- */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Ajuste Laptop (Hover) */
+@media (min-width: 992px) {
+    .wa-container:hover .wa-button { transform: scale(1.08); transition: 0.3s; }
+}
+
+/* Ajuste Móvil: Ocultar tercera línea si es muy pequeño */
+@media (max-width: 360px) {
+    .wa-line-3 { display: none; }
+}
+/* --- CONTROLES DEL CARRUSEL --- */
+.carousel-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.7);
+    color: var(--texto-negro);
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-size: 20px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 15;
+    opacity: 0; /* Oculto por defecto */
+    transition: all 0.3s ease;
+    backdrop-filter: blur(4px);
+}
+
+.carousel-btn.prev { left: 10px; }
+.carousel-btn.next { right: 10px; }
+
+/* --- VISIBILIDAD DE FLECHAS SEGÚN DISPOSITIVO --- */
+
+/* 1. Ocultar por completo en pantallas táctiles/celulares */
+@media (max-width: 991px) {
+    .carousel-btn {
+        display: none !important;
+    }
+}
+
+/* 2. Mostrar solo en Laptop/Desktop al pasar el mouse */
+@media (min-width: 992px) {
+    .carousel-btn {
+        display: flex; /* Asegura que se vea el círculo */
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .carousel-container:hover .carousel-btn {
+        opacity: 1;
+    }
+}
+/* La animación de "aparecer" */
+@keyframes entradaSuave {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card {
+    background: white;
+    border-radius: 15px;
+    padding: 12px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    position: relative;
+    /* Cero animaciones de entrada */
+    opacity: 1 !important; 
+    transform: none !important;
+    display: block;
+    /* Solo dejamos la transición para el hover (el efecto al pasar el mouse) */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* El filtrado debe ser un "apagar y encender" inmediato */
+.card.hidden {
+    display: none !important;
+}
+/* Retraso progresivo para que las cartas aparezcan una tras otra */
+.card:nth-child(1) { animation-delay: 0.1s; }
+.card:nth-child(2) { animation-delay: 0.15s; }
+.card:nth-child(3) { animation-delay: 0.2s; }
+.card:nth-child(4) { animation-delay: 0.25s; }
+
+/* Efecto Hover en las Cards (Laptop) */
+@media (min-width: 992px) {
+    .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+}
+
+/* --- ANIMACIÓN DE LOS BOTONES DE AÑADIR --- */
+.btn-add {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Efecto al presionar (Feedback) */
+.btn-add:active {
+    transform: scale(0.92);
+    background-color: #0056b3; /* Un azul más oscuro al pulsar */
+}
+
+/* Brillo sutil al pasar el mouse en laptop */
+@media (min-width: 992px) {
+    .btn-add:hover {
+        background-color: #0069d9;
+        box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+    }
+}
+/* --- SUGERENCIAS CON ESTILO DE FILTRO --- */
+.search-container {
+    width: 100%;
+    max-width: 450px;
+    margin: 0 auto;
+}
+
+.search-input {
+    width: 100%;
+    padding: 12px 20px;
+    border: 1px solid #e5e5ea;
+    border-radius: 30px;
+    outline: none;
+    font-size: 16px;
+    text-align: center;
+    transition: all 0.2s ease;
+}
+
+.search-input:focus {
+    border-color: var(--azul-premium);
+    box-shadow: 0 4px 12px rgba(0,123,255,0.1);
+}
+
+/* Reutilizamos tu estilo de menú pero lo adaptamos al buscador */
+.sugerencias-desplegable {
+    display: none; /* Se controla por JS */
+    width: 100% !important; 
+    top: 110% !important; /* Un poco más abajo del input */
+    left: 0 !important;
+    transform: none !important;
+    max-height: 250px;
+    overflow-y: auto;
+    opacity: 1 !important;
+    visibility: visible !important;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+/* Estilo para los ítems (copiando tus .menu-item) */
+.sugerencia-item {
+    padding: 12px 20px;
+    cursor: pointer;
+    font-size: 14px;
+    border-bottom: 1px solid #f2f2f7;
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.2s;
+}
+
+.sugerencia-item:hover {
+    background: #f2f2f7;
+    color: var(--azul-premium);
+}
+
+.sugerencia-marca {
+    font-size: 10px;
+    background: #eee;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #666;
+    text-transform: uppercase;
+}
+.brand-repuesto {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: #e11d48; /* Rojo premium */
+    color: white;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 4px;
+    z-index: 20;
+    text-transform: uppercase;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
