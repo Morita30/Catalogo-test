@@ -728,35 +728,4 @@ button {
     z-index: 20;
     text-transform: uppercase;
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-}
-.btn-voice-minimal {
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    color: var(--texto-gris); /* Color suave para no distraer */
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 5px;
-    transition: color 0.3s ease;
-}
-
-.btn-voice-minimal:hover {
-    color: var(--azul-premium);
-}
-
-/* Animación minimalista cuando escucha */
-#voce-btn.escuchando {
-    color: #ff3b30; /* Rojo Apple/Premium */
-    animation: micro-pulse 1.2s infinite;
-}
-
-@keyframes micro-pulse {
-    0% { opacity: 1; }
-    50% { opacity: 0.3; }
-    100% { opacity: 1; }
-}
+}
