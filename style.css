@@ -496,14 +496,13 @@ button {
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 6px 18px rgba(37, 211, 102, 0.35);
 }
 
 .wa-logo-img {
-    width: 38px;
-    height: 38px;
+    width: 55px;
+    height: 55px;
     border-radius: 50%;
-    background: white;
+    background: none;
     object-fit: contain;
 }
 
