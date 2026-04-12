@@ -14,17 +14,14 @@
 
     <nav class="sticky-controls">
         <div class="header-controls">
-<div class="search-container" style="position: relative; display: flex; align-items: center;">
+<div class="search-container">
     <input type="text" id="bus" class="search-input" 
            placeholder="🔍 Buscar producto..." 
            onkeyup="ejecutarFiltro()" 
-           autocomplete="off">
-    <button id="voce-btn" onclick="iniciarVoz()" 
-            style="position: absolute; right: 15px; background: none; border: none; cursor: pointer; font-size: 20px;">
-        🎤
-    </button>
+           autocomplete="off"
+           autocorrect="off" 
+           spellcheck="false">
 </div>
-
             <div class="selectors-row">
                 <div class="menu-dropdown">
                     <button class="btn-menu" id="btnCat" onclick="toggleMenu('mCat', 'btnCat', event)">
@@ -74,9 +71,14 @@
 
     <script src="database.js"></script>
     <script src="main.js"></script>
-   <a href="https://wa.me/51947429347?text=Hola%20Frenos%20Dulanto,%20tengo%20una%20consulta" class="wa-container" target="_blank">
+   <a href="https://wa.me/51947429347?text=Hola%20Frenos%20Dulanto,%20tengo%20una%20consulta" class="wa-container" target="_blank">
+    <div class="wa-message-box">
+        <span class="wa-line-1">¿Dudas con un repuesto?</span>
+        <span class="wa-line-2">¡Escríbenos ahora!</span>
+        <span class="wa-line-3">Atención inmediata</span>
+    </div>
     <div class="wa-button">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" class="wa-logo-img">
+        <img src="logo.png" alt="WhatsApp" class="wa-logo-img">
     </div>
 </a>
 </body>

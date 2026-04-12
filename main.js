@@ -59,7 +59,6 @@ function renderProductos() {
             <img src="${p.imgs[0]}">
         `;
 
-        // Solo mostramos la etiqueta de marca si existe en el Excel
         const labelMarca = p.brand ? `<div class="brand-repuesto">${p.brand}</div>` : "";
 
         htmlFinal += `
@@ -81,7 +80,7 @@ function renderProductos() {
             </div>
           </div>
           <div class="brand-tag">${p.m}</div>
-          <h3 style="font-size:12px; margin:3px 0; min-height:30px;">${p.n}</h3>
+          <h3 style="font-size:12px; margin:3px 0; min-height:30px; padding: 0 5px;">${p.n}</h3>
           <div class="price-tag">S/ ${p.p}.00</div>
           <button class="btn-add" onclick="addToCart('${p.n}', ${p.p}, event)">Añadir</button>
         </div>`;
@@ -126,23 +125,14 @@ function moveCarouselInfinite(id, dir) {
 function ejecutarFiltro() {
     const query = document.getElementById('bus').value.toLowerCase().trim();
     const palabras = query.split(/\s+/); 
-    const cards = document.querySelectorAll('.card');
-
-    cards.forEach(c => {
+    document.querySelectorAll('.card').forEach(c => {
         const txt = c.getAttribute('data-full').toLowerCase();
         const matchCat = (fCat === 'todas' || c.getAttribute('data-tipo') === fCat);
         const matchMar = (fMarca === 'todas' || c.getAttribute('data-marca') === fMarca); 
         const matchBus = palabras.every(p => txt.includes(p)); 
-
-        // Uso de classList para activar el display:none del CSS
-        if (matchCat && matchMar && matchBus) {
-            c.classList.remove('hidden');
-        } else {
-            c.classList.add('hidden');
-        }
+        if (matchCat && matchMar && matchBus) c.classList.remove('hidden'); else c.classList.add('hidden');
     });
 }
-
 
 function setFiltro(tipo, val, txt, el, e) {
     e.stopPropagation();
@@ -245,41 +235,3 @@ function sendWhatsApp() {
 
 window.onclick = () => closeAllMenus();
 document.addEventListener('DOMContentLoaded', cargarProductos);
-function iniciarVoz() {
-    const btn = document.getElementById('voce-btn');
-    const inputBusqueda = document.getElementById('bus');
-    
-    // Verificar si el navegador soporta reconocimiento de voz
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    
-    if (!SpeechRecognition) {
-        alert("Lo siento, tu navegador no soporta búsqueda por voz.");
-        return;
-    }
-
-    const recognition = new SpeechRecognition();
-    recognition.lang = 'es-ES'; // Idioma español
-    recognition.interimResults = false; // Solo resultados finales
-    recognition.maxAlternatives = 1;
-
-    recognition.onstart = () => {
-        btn.classList.add('escuchando');
-    };
-
-    recognition.onresult = (event) => {
-        const textoEscuchado = event.results[0][0].transcript;
-        inputBusqueda.value = textoEscuchado;
-        ejecutarFiltro(); // Filtra los productos automáticamente con lo que escuchó
-    };
-
-    recognition.onerror = (event) => {
-        console.error("Error de voz: ", event.error);
-        btn.classList.remove('escuchando');
-    };
-
-    recognition.onend = () => {
-        btn.classList.remove('escuchando');
-    };
-
-    recognition.start();
-}
