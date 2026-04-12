@@ -428,21 +428,21 @@ button {
 
 /* --- BOTÓN CIRCULAR CON LOGO --- */
 .wa-button {
-    width: 70px;
-    height: 70px;
-    background-color: var(--verde-wa);
+    width: 60px;
+    height: 60px;
+    background-color: none ;
     border-radius: 50%;
-    display: flex;
+    display: flex; 
     align-items: center;
     justify-content: center;
+    box-shadow: none;
     transition: all 0.3s ease;
 }
-
 .wa-logo-img {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: white;
+    background: none;
     object-fit: contain;
 }
 
@@ -464,7 +464,7 @@ button {
     display: flex;
     align-items: flex-end; /* Alinea el texto a la base del logo */
     text-decoration: none;
-    z-index: 99999;
+    z-index:99999;
 }
 
 /* --- BURBUJA DE TEXTO COMPACTA --- */
@@ -474,7 +474,7 @@ button {
     padding: 8px 12px;
     border-radius: 15px 15px 2px 15px; /* Esquina inferior derecha cuadrada */
     margin-right: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.12);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0);
     display: flex;
     flex-direction: column; /* Crea las filas de texto */
     gap: 2px;
@@ -485,42 +485,8 @@ button {
 /* Niveles de texto con letra chica */
 .wa-line-1 { font-size: 11px; font-weight: 700; color: var(--azul-premium); }
 .wa-line-2 { font-size: 10px; font-weight: 600; color: #444; }
-.wa-line-3 { font-size: 9px; font-weight: 400; color: var(--verde-wa); text-transform: uppercase; }
+.wa-line-3 { font-size: 9px; font-weight: 400; color: blue; text-transform: uppercase; }
 
-/* --- BOTÓN LOGO --- */
-.wa-button {
-    width: 55px;
-    height: 55px;
-    background-color: var(--verde-wa);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.wa-logo-img {
-    width: 55px;
-    height: 55px;
-    border-radius: 50%;
-    background: none;
-    object-fit: contain;
-}
-
-/* --- ANIMACIÓN --- */
-@keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(15px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* Ajuste Laptop (Hover) */
-@media (min-width: 992px) {
-    .wa-container:hover .wa-button { transform: scale(1.08); transition: 0.3s; }
-}
-
-/* Ajuste Móvil: Ocultar tercera línea si es muy pequeño */
-@media (max-width: 360px) {
-    .wa-line-3 { display: none; }
-}
 /* --- CONTROLES DEL CARRUSEL --- */
 .carousel-container {
     position: relative;
@@ -719,4 +685,47 @@ button {
     z-index: 20;
     text-transform: uppercase;
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+/* --- ESTILOS DEL MODAL --- */
+.modal-overlay { /* o #productModal */
+    display: none; /* Por defecto oculto */
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8);
+    z-index: 999999; /* El número más alto posible */
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: white;
+    width: 90%;
+    max-width: 450px;
+    border-radius: 20px;
+    padding: 20px;
+    position: relative;
+    max-height: 85vh;
+    overflow-y: auto;
+}
+
+.close-modal {
+    position: absolute;
+    top: 10px; right: 15px;
+    border: none;
+    background: #eee;
+    border-radius: 50%;
+    width: 30px; height: 30px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.info-clickable {
+    cursor: pointer;
+    padding: 10px 0;
+    transition: background 0.2s;
+}
+
+.info-clickable:hover {
+    background: #f9f9f9;
 }

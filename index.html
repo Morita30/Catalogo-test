@@ -14,14 +14,12 @@
 
     <nav class="sticky-controls">
         <div class="header-controls">
-<div class="search-container">
-    <input type="text" id="bus" class="search-input" 
-           placeholder="🔍 Buscar producto..." 
-           onkeyup="ejecutarFiltro()" 
-           autocomplete="off"
-           autocorrect="off" 
-           spellcheck="false">
-</div>
+            <div class="search-container">
+                <input type="text" id="bus" class="search-input" 
+                       placeholder="🔍 Buscar producto..." 
+                       onkeyup="ejecutarFiltro()" 
+                       autocomplete="off">
+            </div>
             <div class="selectors-row">
                 <div class="menu-dropdown">
                     <button class="btn-menu" id="btnCat" onclick="toggleMenu('mCat', 'btnCat', event)">
@@ -69,17 +67,24 @@
 
     <main class="grid" id="contenedor"></main> 
 
-    <script src="database.js"></script>
+    <a href="https://wa.me/51947429347?text=Hola%20Frenos%20Dulanto" class="wa-container" target="_blank">
+        <div class="wa-message-box">
+            <span class="wa-line-1">¿Dudas con un repuesto?</span>
+            <span class="wa-line-2">¡Escríbenos ahora!</span>
+            <span class="wa-line-3">Atención inmediata</span>
+        </div>
+        <div class="wa-button">
+            <img src="wa-logo.png" alt="WhatsApp" class="wa-logo-img">
+        </div>
+    </a>
+
+    <div id="productModal" class="modal-overlay" onclick="closeProductModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="close-modal" onclick="closeProductModal()">×</button>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
     <script src="main.js"></script>
-   <a href="https://wa.me/51947429347?text=Hola%20Frenos%20Dulanto,%20tengo%20una%20consulta" class="wa-container" target="_blank">
-    <div class="wa-message-box">
-        <span class="wa-line-1">¿Dudas con un repuesto?</span>
-        <span class="wa-line-2">¡Escríbenos ahora!</span>
-        <span class="wa-line-3">Atención inmediata</span>
-    </div>
-    <div class="wa-button">
-        <img src="wa-logo.png" alt="WhatsApp" class="wa-logo-img">
-    </div>
-</a>
 </body>
 </html>
