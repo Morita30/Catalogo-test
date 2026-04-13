@@ -430,14 +430,15 @@ button {
 .wa-button {
     width: 60px;
     height: 60px;
-    background-color: none ;
+    background-color: ;
     border-radius: 50%;
-    display: flex; 
+    display: flex;
     align-items: center;
     justify-content: center;
     box-shadow: none;
     transition: all 0.3s ease;
 }
+
 .wa-logo-img {
     width: 40px;
     height: 40px;
@@ -464,7 +465,7 @@ button {
     display: flex;
     align-items: flex-end; /* Alinea el texto a la base del logo */
     text-decoration: none;
-    z-index:99999;
+    z-index: ;
 }
 
 /* --- BURBUJA DE TEXTO COMPACTA --- */
@@ -474,7 +475,7 @@ button {
     padding: 8px 12px;
     border-radius: 15px 15px 2px 15px; /* Esquina inferior derecha cuadrada */
     margin-right: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.12);
     display: flex;
     flex-direction: column; /* Crea las filas de texto */
     gap: 2px;
@@ -685,47 +686,4 @@ button {
     z-index: 20;
     text-transform: uppercase;
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-}
-/* --- ESTILOS DEL MODAL --- */
-.modal-overlay { /* o #productModal */
-    display: none; /* Por defecto oculto */
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0,0,0,0.8);
-    z-index: 999999; /* El número más alto posible */
-    justify-content: center;
-    align-items: center;
-}
-
-.modal-content {
-    background: white;
-    width: 90%;
-    max-width: 450px;
-    border-radius: 20px;
-    padding: 20px;
-    position: relative;
-    max-height: 85vh;
-    overflow-y: auto;
-}
-
-.close-modal {
-    position: absolute;
-    top: 10px; right: 15px;
-    border: none;
-    background: #eee;
-    border-radius: 50%;
-    width: 30px; height: 30px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-.info-clickable {
-    cursor: pointer;
-    padding: 10px 0;
-    transition: background 0.2s;
-}
-
-.info-clickable:hover {
-    background: #f9f9f9;
 }

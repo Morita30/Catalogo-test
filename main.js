@@ -1,197 +1,206 @@
-/**
- * FRENOS DULANTO - SCRIPT PRINCIPAL
- * Versión Final: Modal + Filtros + Imágenes + Carrito
- */
 
-// --- VARIABLES GLOBALES ---
-let productosData = []; // Aquí guardamos lo que viene del Excel
-let cart = {};          // Aquí guardamos el pedido del usuario
-let fCat = 'todas';     // Filtro de Categoría seleccionado
-let fMarca = 'todas';   // Filtro de Marca seleccionado
+let productosData = []; // Variable global para los productos
+let cart = {};
+let fCat = 'todas', fMarca = 'todas'; 
+let touchStartX = 0;
 
-// URL del Excel publicado como CSV
+// URL DE TU EXCEL (ASEGÚRATE QUE SEA .CSV)
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTu6I5Q2X_1DPoltNoto0K2xIoifzR-rd7WLFLv9t6szv2FiZr4gfuAybQ2rs8PFMKI92OJFNBXyANk/pub?gid=0&single=true&output=csv";
 
-// --- 1. CARGA DE DATOS ---
+// 1. CARGA Y RENDERIZADO
 async function cargarProductos() {
     try {
         const response = await fetch(SHEET_URL);
         const data = await response.text();
         
-        // Dividimos por filas y quitamos la cabecera
-        const filas = data.split("\n").slice(1).filter(f => f.trim() !== "");
-
+        const filas = data.split("\n").slice(1); // Ignorar cabecera
         productosData = filas.map(linea => {
-            // Regex para separar por comas sin romper lo que está entre comillas
-            const columnas = linea.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+            const columnas = linea.split(",");
             
+            // Estructura de fotos (Columnas F, G, H -> índices 5, 6, 7)
             const imgBase = "https://miniture.b-cdn.net/wp-content/uploads/2023/10/kids_toys_02_1.jpeg";
-            
+            const fotos = [
+                columnas[5] && columnas[5].trim() !== "" ? columnas[5].trim() : imgBase,
+                columnas[6] && columnas[6].trim() !== "" ? columnas[6].trim() : imgBase,
+                columnas[7] && columnas[7].trim() !== "" ? columnas[7].trim() : imgBase
+            ];
+
             return {
-                n: columnas[0]?.replace(/"/g, "").trim() || "Producto",      // Nombre
-                m: columnas[1]?.trim().toLowerCase() || "genérico",          // Marca Auto
-                c: columnas[2]?.trim().toLowerCase() || "varios",           // Categoría
-                p: parseInt(columnas[3]?.trim()) || 0,                      // Precio
-                brand: columnas[4]?.trim() || "",                           // Marca Repuesto
-                imgs: [
-                    columnas[5]?.replace(/"/g, "").trim() || imgBase,       // Foto 1
-                    columnas[6]?.replace(/"/g, "").trim() || imgBase,       // Foto 2
-                    columnas[7]?.replace(/"/g, "").trim() || imgBase        // Foto 3
-                ],
-                desc: columnas[8]?.replace(/"/g, "").trim() || "Consulte compatibilidad." // Descripción
+                n: columnas[0] ? columnas[0].trim() : "Producto sin nombre",
+                m: columnas[1] ? columnas[1].trim().toLowerCase() : "genérico",
+                c: columnas[2] ? columnas[2].trim().toLowerCase() : "varios",
+                p: columnas[3] ? parseInt(columnas[3].trim()) : 0,
+                brand: columnas[4] ? columnas[4].trim() : "", // Columna E: Marca del Repuesto
+                imgs: fotos 
             };
         });
-        
-        renderProductos(); // Dibujamos las tarjetas
+        renderProductos(); 
     } catch (e) {
-        console.error("Error cargando el catálogo:", e);
+        console.error("Error al cargar productos de Sheets:", e);
     }
 }
 
-// --- 2. RENDERIZADO DE TARJETAS ---
 function renderProductos() {
     const cont = document.getElementById('contenedor');
-    if (!cont) return;
+    if(!cont) return;
+    
     let htmlFinal = "";
-
+    
     productosData.forEach((p, i) => {
-        // 'data-full' guarda el texto donde el buscador va a rastrear
+        const carruselHTML = `
+            <img src="${p.imgs[2]}">
+            <img src="${p.imgs[0]}">
+            <img src="${p.imgs[1]}">
+            <img src="${p.imgs[2]}">
+            <img src="${p.imgs[0]}">
+        `;
+
+        const labelMarca = p.brand ? `<div class="brand-repuesto">${p.brand}</div>` : "";
+
         htmlFinal += `
         <div class="card" data-tipo="${p.c}" data-marca="${p.m}" data-full="${p.n} ${p.m} ${p.brand}">
-            <div class="img-container" onclick="openProductModal(${i})" style="cursor:pointer">
-                <img src="${p.imgs[0]}" style="width:100%; height:180px; object-fit:cover; border-radius:15px 15px 0 0;">
-                ${p.brand ? `<div class="brand-repuesto">${p.brand}</div>` : ""}
-            </div>
-
-            <div class="info-clickable" onclick="openProductModal(${i})" style="cursor:pointer; padding: 10px;">
-                <div class="brand-tag">${p.m}</div>
-                <h3 style="font-size:12px; margin:3px 0; min-height:30px;">${p.n}</h3>
-                <div class="price-tag">S/ ${p.p}.00</div>
-            </div>
+          <div class="carousel-container" id="container-${i}" ontouchstart="handleTouchStart(event, ${i})" ontouchend="handleTouchEnd(event, ${i})">
             
-            <button class="btn-add" onclick="addToCart('${p.n}', ${p.p}, event)">Añadir</button>
+            ${labelMarca}
+
+            <button class="carousel-btn prev" onclick="moveCarouselInfinite(${i}, -1); event.stopPropagation();">‹</button>
+            <button class="carousel-btn next" onclick="moveCarouselInfinite(${i}, 1); event.stopPropagation();">›</button>
+
+            <div class="carousel-track" id="track-${i}" data-idx="1" data-cloning="false">
+              ${carruselHTML}
+            </div>
+            <div class="carousel-indicators">
+              <span class="dot active"></span>
+              <span class="dot"></span>
+              <span class="dot"></span>
+            </div>
+          </div>
+          <div class="brand-tag">${p.m}</div>
+          <h3 style="font-size:12px; margin:3px 0; min-height:30px; padding: 0 5px;">${p.n}</h3>
+          <div class="price-tag">S/ ${p.p}.00</div>
+          <button class="btn-add" onclick="addToCart('${p.n}', ${p.p}, event)">Añadir</button>
         </div>`;
     });
     cont.innerHTML = htmlFinal;
 }
 
-// --- 3. LÓGICA DE FILTROS ---
+// ... (Resto de funciones: Lógica del carrusel, Filtros, Carrito y Utilidades se mantienen exactamente igual)
+
+function handleTouchStart(e, id) { touchStartX = e.changedTouches[0].screenX; }
+function handleTouchEnd(e, id) {
+    let touchEndX = e.changedTouches[0].screenX;
+    let diff = touchStartX - touchEndX;
+    if (Math.abs(diff) > 40) moveCarouselInfinite(id, diff > 0 ? 1 : -1);
+}
+
+function moveCarouselInfinite(id, dir) {
+    const track = document.getElementById(`track-${id}`);
+    const container = document.getElementById(`container-${id}`);
+    if (!track || track.getAttribute('data-cloning') === 'true') return;
+    const indicators = container.querySelectorAll('.dot');
+    let currentIdx = parseInt(track.getAttribute('data-idx'));
+    let nextIdx = currentIdx + dir;
+    track.classList.remove('no-transition');
+    track.style.transform = `translateX(-${nextIdx * 20}%)`;
+    track.setAttribute('data-idx', nextIdx);
+    let indicatorIdx = (nextIdx === 4) ? 0 : (nextIdx === 0) ? 2 : nextIdx - 1;
+    indicators.forEach(i => i.classList.remove('active'));
+    if(indicators[indicatorIdx]) indicators[indicatorIdx].classList.add('active');
+    if (nextIdx === 0 || nextIdx === 4) {
+        track.setAttribute('data-cloning', 'true');
+        setTimeout(() => {
+            track.classList.add('no-transition');
+            let jumpIdx = (nextIdx === 4) ? 1 : 3;
+            track.style.transform = `translateX(-${jumpIdx * 20}%)`;
+            track.setAttribute('data-idx', jumpIdx);
+            track.setAttribute('data-cloning', 'false');
+        }, 400);
+    }
+}
+
 function ejecutarFiltro() {
-    const busqueda = document.getElementById('bus').value.toLowerCase().trim();
-    const palabras = busqueda.split(/\s+/);
-
-    document.querySelectorAll('.card').forEach(card => {
-        const textoCard = card.getAttribute('data-full').toLowerCase();
-        const catCard = card.getAttribute('data-tipo');
-        const marCard = card.getAttribute('data-marca');
-
-        const matchCat = (fCat === 'todas' || catCard === fCat);
-        const matchMar = (fMarca === 'todas' || marCard === fMarca);
-        const matchBus = palabras.every(pal => textoCard.includes(pal));
-
-        if (matchCat && matchMar && matchBus) {
-            card.style.display = "flex";
-        } else {
-            card.style.display = "none";
-        }
+    const query = document.getElementById('bus').value.toLowerCase().trim();
+    const palabras = query.split(/\s+/); 
+    document.querySelectorAll('.card').forEach(c => {
+        const txt = c.getAttribute('data-full').toLowerCase();
+        const matchCat = (fCat === 'todas' || c.getAttribute('data-tipo') === fCat);
+        const matchMar = (fMarca === 'todas' || c.getAttribute('data-marca') === fMarca); 
+        const matchBus = palabras.every(p => txt.includes(p)); 
+        if (matchCat && matchMar && matchBus) c.classList.remove('hidden'); else c.classList.add('hidden');
     });
 }
 
-// Cambia filtros de botones (Categoría/Marca)
 function setFiltro(tipo, val, txt, el, e) {
     e.stopPropagation();
-    if(tipo === 'cat') {
-        fCat = val;
-        document.getElementById('lCat').innerText = txt;
-    } else {
-        fMarca = val;
-        document.getElementById('lMar').innerText = txt;
-    }
+    if(tipo === 'cat') { fCat = val; document.getElementById('lCat').innerText = txt; document.getElementById('btnCat').classList.toggle('active-filter', val !== 'todas'); }
+    else { fMarca = val; document.getElementById('lMar').innerText = txt; document.getElementById('btnMar').classList.toggle('active-filter', val !== 'todas'); }
+    const menuId = (tipo === 'cat' ? 'mCat' : 'mMar');
+    document.querySelectorAll(`#${menuId} .menu-item`).forEach(i => i.classList.remove('active'));
+    el.classList.add('active');
     closeAllMenus();
     ejecutarFiltro();
 }
 
-// --- 4. MODAL DE PRODUCTO ---
-function openProductModal(index) {
-    const p = productosData[index];
-    const modal = document.getElementById('productModal');
-    const body = document.getElementById('modalBody');
-
-    if (!modal || !body) return;
-
-    body.innerHTML = `
-        <img src="${p.imgs[0]}" style="width:100%; border-radius:15px; margin-bottom:15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
-        <div style="text-align:left;">
-            <span style="color:var(--azul-premium, #0052cc); font-weight:800; font-size:11px; text-transform:uppercase;">${p.m}</span>
-            <h2 style="margin:5px 0; font-size:20px; color:#1c1c1e;">${p.n}</h2>
-            <div style="font-size:22px; font-weight:800; margin:10px 0; color:#333;">S/ ${p.p}.00</div>
-            <div style="background:#f2f2f7; padding:15px; border-radius:12px; font-size:14px; color:#444; line-height:1.4;">
-                <strong>Descripción técnica:</strong><br>${p.desc}
-            </div>
-            <button class="btn-add" style="width:100%; margin-top:20px; padding:18px; font-size:16px;" 
-                    onclick="addToCart('${p.n}', ${p.p}, event); closeProductModal();">
-                Añadir al pedido
-            </button>
-        </div>
-    `;
-    modal.style.display = 'flex';
-}
-
-function closeProductModal() {
-    document.getElementById('productModal').style.display = 'none';
-}
-
-// --- 5. CARRITO Y WHATSAPP ---
 function addToCart(name, price, event) {
-    event.stopPropagation();
-    if (cart[name]) cart[name].qty++; 
-    else cart[name] = { price, qty: 1 };
-    
+    if (cart[name]) cart[name].qty++; else cart[name] = { price, qty: 1 };
     updateCartUI();
-    // Animación pequeña para feedback
-    const btn = event.target;
-    btn.innerText = "¡Añadido!";
-    setTimeout(() => btn.innerText = "Añadir", 800);
+    animateFlyer(event);
 }
 
 function updateCartUI() {
-    let count = 0;
-    let total = 0;
     const list = document.getElementById('cartList');
-    if(!list) return;
-
+    let total = 0, count = 0;
     list.innerHTML = "";
     for (const n in cart) {
+        total += cart[n].price * cart[n].qty;
         count += cart[n].qty;
-        total += cart[n].price * cart[n].qty;
         list.innerHTML += `
-            <div class="cart-item" style="display:flex; justify-content:space-between; margin-bottom:10px; font-size:13px;">
-                <span>${cart[n].qty}x ${n}</span>
-                <strong>S/ ${cart[n].price * cart[n].qty}</strong>
-            </div>`;
+        <div class="cart-item">
+          <div style="text-align:left; font-size:12px"><strong>${n}</strong><br>S/ ${cart[n].price * cart[n].qty}</div>
+          <div style="display:flex; align-items:center; gap:5px">
+            <button class="btn-qty" onclick="changeQty('${n}', -1, event)">-</button>
+            <span style="font-weight:700">${cart[n].qty}</span>
+            <button class="btn-qty" onclick="changeQty('${n}', 1, event)">+</button>
+          </div>
+        </div>`;
     }
-    document.getElementById('cartBadge').innerText = count;
-    document.getElementById('totalLabel').innerText = "S/ " + total;
+    const badge = document.getElementById('cartBadge');
+    if(badge) badge.innerText = count;
+    const totalLab = document.getElementById('totalLabel');
+    if(totalLab) totalLab.innerText = `S/ ${total}`;
 }
 
-function sendWhatsApp() {
-    let msg = "Hola Frenos Dulanto, mi pedido es:%0A";
-    let total = 0;
-    for (const n in cart) {
-        msg += `• ${cart[n].qty} x ${n}%0A`;
-        total += cart[n].price * cart[n].qty;
-    }
-    msg += `%0ATOTAL: S/ ${total}.00`;
-    window.open(`https://wa.me/51947429347?text=${msg}`, '_blank');
+function changeQty(name, delta, e) {
+    e.stopPropagation();
+    cart[name].qty += delta;
+    if (cart[name].qty <= 0) delete cart[name];
+    updateCartUI();
 }
 
-// --- 6. UTILIDADES ---
+function animateFlyer(event) {
+    const btnCart = document.getElementById('btnCart');
+    if(!btnCart) return;
+    const rectCart = btnCart.getBoundingClientRect();
+    const flyer = document.createElement('div');
+    flyer.className = 'flying-item';
+    flyer.style.left = `${event.clientX - 20}px`;
+    flyer.style.top = `${event.clientY - 20}px`;
+    document.body.appendChild(flyer);
+    setTimeout(() => {
+        flyer.style.left = `${rectCart.left + (rectCart.width / 2) - 20}px`;
+        flyer.style.top = `${rectCart.top + (rectCart.height / 2) - 20}px`;
+        flyer.style.transform = 'scale(0.1)';
+        flyer.style.opacity = '0';
+    }, 10);
+    setTimeout(() => { flyer.remove(); btnCart.style.transform = 'scale(1.3)'; setTimeout(() => btnCart.style.transform = 'scale(1)', 200); }, 700);
+}
+
 function toggleMenu(menuId, btnId, e) {
     e.stopPropagation();
     const menu = document.getElementById(menuId);
-    const isOpen = menu.classList.contains('show');
+    const isShowing = menu.classList.contains('show');
     closeAllMenus();
-    if(!isOpen) menu.classList.add('show');
+    if(!isShowing) { menu.classList.add('show'); document.getElementById(btnId).classList.add('open'); }
 }
 
 function toggleCartModal(e) {
@@ -204,10 +213,21 @@ function toggleCartModal(e) {
 
 function closeAllMenus() {
     document.querySelectorAll('.menu-content').forEach(m => m.classList.remove('show'));
-    const modalCart = document.getElementById('cartModal');
-    if(modalCart) modalCart.style.display = 'none';
+    document.querySelectorAll('.btn-menu').forEach(b => b.classList.remove('open'));
+    const modal = document.getElementById('cartModal');
+    if(modal) modal.style.display = 'none';
 }
 
-// Eventos de inicio
-window.onclick = closeAllMenus;
+function sendWhatsApp() {
+    let msg = "Hola *Frenos Dulanto*, mi pedido:%0A";
+    let t = 0;
+    for (const n in cart) {
+        msg += `• ${cart[n].qty} x ${n} - S/ ${cart[n].price * cart[n].qty}%0A`;
+        t += cart[n].price * cart[n].qty;
+    }
+    msg += `%0ATOTAL: S/ ${t}.00`;
+    window.open(`https://wa.me/51947429347?text=${msg}`, '_blank');
+}
+
+window.onclick = () => closeAllMenus();
 document.addEventListener('DOMContentLoaded', cargarProductos);
